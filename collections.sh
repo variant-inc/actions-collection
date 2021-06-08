@@ -10,5 +10,3 @@ docker_publish()
   sh ./scripts/trivy_scan.sh
   echo "END: trivy_scan.sh"
 }
-
-docker_publish
