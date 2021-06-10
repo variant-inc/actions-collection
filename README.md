@@ -6,6 +6,6 @@ Collection.sh contains shell functions that are ran in [actions-dotnet](https://
 
 To run shell functions from collection.sh:
 
-```
+```bash
 sh collection.sh {function}
 ```
