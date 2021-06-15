@@ -3,7 +3,7 @@ set -e
 
 docker_publish()
 {
-  sh ./actions-collection/scripts/publish.sh
+  sh ./scripts/publish.sh
 }
 
 "$@"
