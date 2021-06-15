@@ -1,8 +1,7 @@
 #!/bin/bash
 set -e
 
-
-sh ./actions-collection/scripts/publish.sh
-
-
-"$@"
+docker_publish()
+{
+  ./actions-collection/scripts/publish.sh
+}
