@@ -29,8 +29,6 @@ if [ -z "$DOCKERFILE_PATH" ]; then
   dotnet publish -c Release -o publish
 fi
 
-echo "Build-arg envs:"
-echo "$(for i in $(env); do out+="--build-arg $i "; done; echo "$out")"
 eval "docker build -t $IMAGE $DOCKERFILE_PATH $(for i in $(env); do out+="--build-arg $i "; done; echo "$out")"
 
 echo "Start: Trivy Scan"
