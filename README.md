@@ -8,5 +8,5 @@ To run shell functions from collection.sh:
 
 ```bash
 source collection.sh
-docker_publish
+{function}
 ```
