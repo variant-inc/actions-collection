@@ -37,5 +37,5 @@ echo "End: Trivy Scan"
 
 docker push "$IMAGE"
 
-echo "Setting image name output parameter"
-echo "::set-output name=image_name::$IMAGE"
+echo "Setting image name to environment variables"
+echo "IMAGE_NAME=$IMAGE" >>"$GITHUB_ENV"
