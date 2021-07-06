@@ -36,3 +36,6 @@ sh -c "./actions-collection/scripts/trivy_scan.sh"
 echo "End: Trivy Scan"
 
 docker push "$IMAGE"
+
+echo "Setting image name to environment variables"
+echo "IMAGE_NAME=$IMAGE" >>"$GITHUB_ENV"
