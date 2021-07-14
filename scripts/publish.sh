@@ -15,6 +15,8 @@ cleanup() {
 
 trap "cleanup" EXIT
 
+docker login --username drivevariant -p "$DOCKER_PASSWORD"
+
 echo "Connecting to AWS account."
 
 docker login -u AWS -p "$(aws ecr get-login-password)" "$ECR_REGISTRY"
