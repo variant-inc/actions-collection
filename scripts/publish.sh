@@ -25,13 +25,7 @@ DOCKERFILE_PATH="$INPUT_DOCKERFILE_DIR_PATH"
 
 mkdir -p /publish
 
-if [ -z "$DOCKERFILE_PATH" ]; then
-  echo "Running lazy publish image"
-  DOCKERFILE_PATH=/docker/
-  dotnet publish -c Release -o publish
-fi
-
-eval "docker build -t $IMAGE $DOCKERFILE_PATH $(for i in $(env); do out+="--build-arg $i "; done; echo "$out")"
+eval "docker build -t $IMAGE $DOCKERFILE_PATH $(for i in $(env); do if [ ! -z $i ]; then out+="--build-arg $i "; fi; done; echo "$out")"
 
 echo "Start: Trivy Scan"
 sh -c "./actions-collection/scripts/trivy_scan.sh"
