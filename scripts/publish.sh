@@ -25,7 +25,7 @@ DOCKERFILE_PATH="$INPUT_DOCKERFILE_DIR_PATH"
 
 mkdir -p /publish
 
-eval "docker build -t $IMAGE $DOCKERFILE_PATH $(for i in $(env); do if [ ! -z $i ]; then out+="--build-arg $i "; fi; done; echo "$out")"
+eval "docker build -t $IMAGE $DOCKERFILE_PATH $(for i in $(env); do if [ -n "$i" ]; then out+="--build-arg $i "; fi; done; echo "$out")"
 
 echo "Start: Trivy Scan"
 sh -c "./actions-collection/scripts/trivy_scan.sh"
