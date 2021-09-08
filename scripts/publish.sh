@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -xeu
+set -xe
 
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
 ECR_REGISTRY="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
@@ -25,7 +25,12 @@ DOCKERFILE_PATH="$INPUT_DOCKERFILE_DIR_PATH"
 
 mkdir -p /publish
 
-eval "docker build -t $IMAGE $DOCKERFILE_PATH $(for i in $(env); do if [[ "$i" == *"="* ]]; then out+="--build-arg $i "; fi; done; echo "$out")"
+
+BUILD_ARGS=""
+
+while IFS='=' read -r -d '' n v; do BUILD_ARGS+="--build-arg $n=$v "; done < <(env -0)
+
+eval "docker build $BUILD_ARGS -t foo-test $DOCKERFILE_PATH"
 
 echo "Start: Trivy Scan"
 sh -c "./actions-collection/scripts/trivy_scan.sh"
