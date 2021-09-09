@@ -25,7 +25,6 @@ DOCKERFILE_PATH="$INPUT_DOCKERFILE_DIR_PATH"
 
 mkdir -p /publish
 
-
 touch args.txts
 env | tee args.txt
 BUILD_ARGS=""
