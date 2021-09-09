@@ -26,11 +26,12 @@ DOCKERFILE_PATH="$INPUT_DOCKERFILE_DIR_PATH"
 mkdir -p /publish
 
 
+touch args.txts
+env | tee args.txt
 BUILD_ARGS=""
+while IFS='=' read -r n v; do BUILD_ARGS+="--build-arg $n='$v' "; done < <(cat args.txt)
 
-while IFS='=' read -r -d '' n v; do BUILD_ARGS+="--build-arg $n=$v "; done < <(env -0)
-
-eval "docker build $BUILD_ARGS -t foo-test $DOCKERFILE_PATH"
+eval "docker build $BUILD_ARGS -t $IMAGE $DOCKERFILE_PATH"
 
 echo "Start: Trivy Scan"
 sh -c "./actions-collection/scripts/trivy_scan.sh"
