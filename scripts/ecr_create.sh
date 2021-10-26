@@ -21,7 +21,9 @@ curl -f -L "url"  --request GET "https://$LAZY_API_URL/profiles/prod/regions/$AW
         \"profile\" : \"prod\",
         \"region\": \"$AWS_REGION\",
         \"options\": {
-            \"repositoryName\": \"$ECR_REPO\"
+            \"repositoryName\": \"$ECR_REPO\",
+            \"imageTagMutability\": \"MUTABLE\"
+            
         }
     }" \
   "https://$LAZY_API_URL/profiles/prod/regions/$AWS_REGION/ecr/repo" 
