@@ -7,7 +7,7 @@ on:
 jobs:
   lint:
     name: Lint Code Base
-    runs-on: [runn]
+    runs-on: [ops]
 
     steps:
       - name: Checkout Code
