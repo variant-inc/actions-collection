@@ -7,7 +7,7 @@ URL_ECR_REPO=$( echo "$ECR_REPO" | sed 's/\//\%2F/g')
 echo "ECR_REPO: $ECR_REPO"
 echo "URL_ECR_REPO: $URL_ECR_REPO"
 
-curl -f -L "url"  --request GET "https://$LAZY_API_URL/profiles/prod/regions/$AWS_REGION/ecr/repo/$URL_ECR_REPO/repo-policy" \
+curl -f -L "url"  --request GET "https://$LAZY_API_URL/tenants/apps/profiles/production/regions/$AWS_REGION/ecr/repo/$URL_ECR_REPO/repo-policy" \
   --header "x-api-key:  $LAZY_API_KEY" \
 || { echo "Repo not found. Hence creating a new repo with name ${ECR_REPO}" &&
   wget \
@@ -26,5 +26,5 @@ curl -f -L "url"  --request GET "https://$LAZY_API_URL/profiles/prod/regions/$AW
             
         }
     }" \
-  "https://$LAZY_API_URL/profiles/prod/regions/$AWS_REGION/ecr/repo" 
+  "https://$LAZY_API_URL/tenants/apps/profiles/production/regions/$AWS_REGION/ecr/repo" 
   }
