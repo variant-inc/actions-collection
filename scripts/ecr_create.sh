@@ -18,7 +18,7 @@ curl -f -L "url"  --request GET "https://$LAZY_API_URL/tenants/apps/profiles/pro
   --header "x-api-key:  $LAZY_API_KEY" \
   --header 'Content-Type: application/json' \
   --body-data "{
-        \"profile\" : \"prod\",
+        \"profile\" : \"production\",
         \"region\": \"$AWS_REGION\",
         \"options\": {
             \"repositoryName\": \"$ECR_REPO\",
