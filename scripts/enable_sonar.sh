@@ -1,6 +1,6 @@
 #!/bin/bash
 
-url --include \
+curl --include \
     --request POST \
     --header "Content-Type: application/x-www-form-urlencoded" \
     -u ${SONAR_TOKEN}: \
