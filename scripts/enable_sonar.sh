@@ -25,7 +25,7 @@ SONAR_PROJECT_KEY=$(echo "${GITHUB_REPOSITORY}" | sed 's/\//_/')
 echo "Printing SONAR_PROJECT_KEY: $SONAR_PROJECT_KEY"
 echo "Running autoscan"
 curl --fail --include \
-    -u ${SONAR_TOKEN}: \
+    -u "${SONAR_TOKEN}": \
     "https://sonarcloud.io/api/autoscan/eligibility?autoEnable=false&projectKey=$SONAR_PROJECT_KEY"
 
 echo "Running activation"
