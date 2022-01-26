@@ -16,7 +16,7 @@ Trap {
     Write-Error $_
 }
 
-function Create-SonarProject {
+function Register-SonarProject {
     [CmdletBinding()]
     param (
         [Parameter()]
@@ -65,7 +65,7 @@ function Create-SonarProject {
     $Response | ConvertTo-Json
 }
 
-function Check-SonarProject {
+function Get-SonarProjectOrCreate {
     [CmdletBinding()]
     param (
         [Parameter()]
@@ -85,20 +85,20 @@ function Check-SonarProject {
         $Response = Invoke-RestMethod -Uri $sonarCheckUrl `
             -Headers $headers -Method GET
         $Response | ConvertTo-Json
-        if (($Response.component | Select -ExpandProperty key) -eq $SONAR_PROJECT_KEY) {
+        if (($Response.component | Select-Object -ExpandProperty key) -eq $SONAR_PROJECT_KEY) {
             Write-Output "Sonar project key exists in sonar console"
         }
 
     }
     catch {
+        Write-Error $_.ErrorDetails.Message
         if ($_.ErrorDetails.Message -match "not found") {
             Write-Information "Sonar project key $SONAR_PROJECT_KEY not found"
-            Write-Host $_.ErrorDetails.Message
             Write-Information "Creating sonar project key: $SONAR_PROJECT_KEY"
-            Create-SonarProject -SONAR_PROJECT_KEY $SONAR_PROJECT_KEY -SONAR_PROJECT_NAME $SONAR_PROJECT_NAME
+            Register-SonarProject -SONAR_PROJECT_KEY $SONAR_PROJECT_KEY -SONAR_PROJECT_NAME $SONAR_PROJECT_NAME
         }
         else {
-            Write-Output "no match"
+            throw "Some Unexpected Exception Occured"
         }
     }
 
@@ -107,9 +107,9 @@ function Check-SonarProject {
 
 if (![string]::IsNullOrEmpty($SONAR_PROJECT_KEY_INPUT)) {
     Write-Output "Checking for sonar project key $SONAR_PROJECT_KEY_INPUT"
-    Check-SonarProject -SONAR_PROJECT_KEY $SONAR_PROJECT_KEY_INPUT -SONAR_PROJECT_NAME $SONAR_PROJECT_KEY_INPUT
+    Get-SonarProjectOrCreate -SONAR_PROJECT_KEY $SONAR_PROJECT_KEY_INPUT -SONAR_PROJECT_NAME $SONAR_PROJECT_KEY_INPUT
 } else {
-    Check-SonarProject -SONAR_PROJECT_KEY $env:SONAR_PROJECT_KEY -SONAR_PROJECT_NAME $env:SONAR_PROJECT_KEY
+    Get-SonarProjectOrCreate -SONAR_PROJECT_KEY $env:SONAR_PROJECT_KEY -SONAR_PROJECT_NAME $env:SONAR_PROJECT_KEY
 }
 
 
