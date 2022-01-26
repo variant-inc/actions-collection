@@ -91,7 +91,7 @@ function Get-SonarProjectOrCreate {
 
     }
     catch {
-        Write-Error $_.ErrorDetails.Message
+        Write-Output $_.ErrorDetails.Message
         if ($_.ErrorDetails.Message -match "not found") {
             Write-Information "Sonar project key $SONAR_PROJECT_KEY not found"
             Write-Information "Creating sonar project key: $SONAR_PROJECT_KEY"
@@ -106,7 +106,7 @@ function Get-SonarProjectOrCreate {
 
 
 if (![string]::IsNullOrEmpty($SONAR_PROJECT_KEY_INPUT)) {
-    Write-Output "Checking for sonar project key $SONAR_PROJECT_KEY_INPUT"
+    Write-Output "Checking for sonar project key input: $SONAR_PROJECT_KEY_INPUT"
     Get-SonarProjectOrCreate -SONAR_PROJECT_KEY $SONAR_PROJECT_KEY_INPUT -SONAR_PROJECT_NAME $SONAR_PROJECT_KEY_INPUT
 } else {
     Get-SonarProjectOrCreate -SONAR_PROJECT_KEY $env:SONAR_PROJECT_KEY -SONAR_PROJECT_NAME $env:SONAR_PROJECT_KEY
