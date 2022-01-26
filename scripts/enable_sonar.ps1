@@ -61,7 +61,7 @@ function Register-SonarProject {
     $body | ConvertTo-Json
     $Response = Invoke-RestMethod -Uri $sonarCreateUrl `
         -Headers $headers -Method post -Body ($body | ConvertTo-Json -Depth 5)
-    Write-Output "Sonar project response:"
+    Write-Output "Create sonar project response:"
     $Response | ConvertTo-Json
 }
 
@@ -109,6 +109,7 @@ if (![string]::IsNullOrEmpty($SONAR_PROJECT_KEY_INPUT)) {
     Write-Output "Checking for sonar project key input: $SONAR_PROJECT_KEY_INPUT"
     Get-SonarProjectOrCreate -SONAR_PROJECT_KEY $SONAR_PROJECT_KEY_INPUT -SONAR_PROJECT_NAME $SONAR_PROJECT_KEY_INPUT
 } else {
+    Write-Output "No sonar project key input given using devops convention:$env:SONAR_PROJECT_KEY"
     Get-SonarProjectOrCreate -SONAR_PROJECT_KEY $env:SONAR_PROJECT_KEY -SONAR_PROJECT_NAME $env:SONAR_PROJECT_KEY
 }
 
