@@ -35,8 +35,28 @@ fi
 echo "Printing trivy ignore file" 
 cd "$GITHUB_WORKSPACE" && cat .trivyignore
 
-echo "Checking for low level vulnerablities" 
-eval "trivy --exit-code 0 --severity=HIGH,MEDIUM,LOW,UNKNOWN $IMAGE"
+echo "Listing all vulnerablities."
+eval "trivy image --exit-code 0 $IMAGE" 
 
-echo "Checking for critical risk vulnerablities"
-eval "trivy --exit-code 1 --severity CRITICAL $IMAGE"
+echo "Checking for critical risk vulnerablities. Ignoring unfixed."
+set +e
+eval "trivy image --ignore-unfixed --exit-code 1 --severity CRITICAL $IMAGE"
+
+e=$?
+if [ "$e" -eq "0" ]; then
+    echo "________________________________________________________________"
+    echo "No critical issues found."
+    echo "________________________________________________________________"
+elif [ "$e" -gt "0" ]; then
+    set -e
+    echo -e "\e[1;31m ________________________________________________________________\e[0m"
+    echo -e "\e[1;31m ________________________________________________________________\e[0m"
+    echo ""
+    echo ""
+    echo -e "\e[1;31m Critical issues found in Dockerfile. Please fix them to proceed.\e[0m"
+    echo ""
+    echo ""
+    echo -e "\e[1;31m ________________________________________________________________\e[0m"
+    echo -e "\e[1;31m ________________________________________________________________\e[0m"
+    exit 1 
+fi
