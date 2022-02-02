@@ -34,8 +34,8 @@ function Register-SonarProject {
     }
     $gitResponse = Invoke-RestMethod -Uri $githubRepoUrl `
         -Headers $headers -Method GET
-    $gitResponse | ConvertTo-Json
     $repo_id = $gitResponse.id
+    Write-Output "Printing Repo id:$repo_id"
 
     Write-Output "Creating for sonar project key $SONAR_PROJECT_KEY"
     $sonarCreateUrl = "https://sonarcloud.io/api/alm_integration/provision_monorepo_projects"
