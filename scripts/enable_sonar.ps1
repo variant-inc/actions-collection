@@ -113,4 +113,4 @@ if (![string]::IsNullOrEmpty($SONAR_PROJECT_KEY_INPUT)) {
     Get-SonarProjectOrCreate -SONAR_PROJECT_KEY $env:SONAR_PROJECT_KEY -SONAR_PROJECT_NAME $env:SONAR_PROJECT_KEY
 }
 
-
+git config --global --add safe.directory /github/workspace
