@@ -23,7 +23,7 @@ function CheckSonarRun {
         [string]
         $SONAR_PROJECT_KEY
     )
-    $sonarCheckUrl = "https://sonarcloud.io/api/project_branches/list?project=$SONAR_PROJECT_KEY1"
+    $sonarCheckUrl = "https://sonarcloud.io/api/project_branches/list?project=$SONAR_PROJECT_KEY"
     $headers = @{
         'Authorization' = 'Bearer ' + $env:SONAR_TOKEN
         'Accept'        = 'application/json'
