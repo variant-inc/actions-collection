@@ -26,7 +26,7 @@ DOCKERFILE_PATH="$INPUT_DOCKERFILE_DIR_PATH"
 mkdir -p /publish
 
 touch args.txts
-env | tee args.txt
+env > args.txt
 BUILD_ARGS=""
 while IFS='=' read -r n v; do BUILD_ARGS+="--build-arg $n='$v' "; done < <(cat args.txt)
 
