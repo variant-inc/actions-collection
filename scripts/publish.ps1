@@ -22,18 +22,18 @@ function CommandAliasFunction {
 
 Set-Alias -Name ce -Value CommandAliasFunction -Scope script
 
-Write-Output "Starting script"
 $AwsAccountId = $(aws sts get-caller-identity --output text --query Account)
 $EcrRegistry = "$AwsAccountId.dkr.ecr.$env:AWS_DEFAULT_REGION.amazonaws.com"
 $Image = "$EcrRegistry/$env:INPUT_ECR_REPOSITORY" + ":" + "$env:IMAGE_VERSION"
 $DockerfilePath = "$env:INPUT_DOCKERFILE_DIR_PATH"
+$removeImage = $true
 
 try {
     $ImageCount = aws ecr list-images --repository-name $env:INPUT_ECR_REPOSITORY | jq '.imageIds | unique_by(.imageDigest) | length'
     $ImageTags = aws ecr describe-images --repository-name $env:INPUT_ECR_REPOSITORY --max-items $ImageCount --query 'imageDetails[*].imageTags[0]'
     if ($ImageTags -like "*$env:IMAGE_VERSION*") {
         Write-Output "Image already pushed. Skipping docker push"
-        $imageRemove = $false
+        $removeImage = $false
         exit 0
     }
     else {
@@ -68,7 +68,7 @@ catch {
 }
 finally {
     ce docker logout "$EcrRegistry"
-    if (!($imageRemove -eq $false)) {
+    if ($true -eq $removeImage) {
         Write-Output "Removing image"
         ce docker image rm "$IMAGE"
     }
