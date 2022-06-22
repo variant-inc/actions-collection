@@ -37,7 +37,7 @@ try {
         exit 0
     }
     else {
-        Write-Output "Not pushed yet"
+        Write-Output "New image, proceeding to docker push"
     }
 
     ce docker login --username drivevariant -p "$env:DOCKER_PASSWORD"
