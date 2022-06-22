@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -xe
+set -e
 
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --output text --query Account)
 ECR_REGISTRY="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
@@ -26,7 +26,7 @@ DOCKERFILE_PATH="$INPUT_DOCKERFILE_DIR_PATH"
 mkdir -p /publish
 
 touch args.txts
-env | tee args.txt
+env > args.txt
 BUILD_ARGS=""
 while IFS='=' read -r n v; do BUILD_ARGS+="--build-arg $n='$v' "; done < <(cat args.txt)
 
