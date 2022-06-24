@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ex
+set -e
 
 ECR_REPO=$1
 URL_ECR_REPO=$( echo "$ECR_REPO" | sed 's/\//\%2F/g')
