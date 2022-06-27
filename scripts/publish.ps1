@@ -59,7 +59,7 @@ try {
     ce docker push "$IMAGE"
 
     Write-Output "Setting image name to environment variables"
-    Write-Output "IMAGE_NAME=$IMAGE" >>"$GITHUB_ENV"
+    Write-Output "IMAGE_NAME=$IMAGE" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 }
 catch {
     Write-Output "`e[31m----------------------------------------------------------------`e[0m";
