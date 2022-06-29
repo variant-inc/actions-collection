@@ -28,6 +28,9 @@ $Image = "$EcrRegistry/$env:INPUT_ECR_REPOSITORY" + ":" + "$env:IMAGE_VERSION"
 $DockerfilePath = "$env:INPUT_DOCKERFILE_DIR_PATH"
 $removeImage = $true
 
+Write-Output "Setting image name to environment variables"
+Write-Output "IMAGE_NAME=$Image" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+
 try {
     $ImageCount = aws ecr list-images --repository-name $env:INPUT_ECR_REPOSITORY | jq '.imageIds | unique_by(.imageDigest) | length'
     $ImageTags = aws ecr describe-images --repository-name $env:INPUT_ECR_REPOSITORY --max-items $ImageCount --query 'imageDetails[*].imageTags[0]'
@@ -56,10 +59,7 @@ try {
     sh -c "./actions-collection/scripts/trivy_scan.sh"
     Write-Output "End: Trivy Scan"
 
-    ce docker push "$IMAGE"
-
-    Write-Output "Setting image name to environment variables"
-    Write-Output "IMAGE_NAME=$IMAGE" >>"$GITHUB_ENV"
+    ce docker push "$Image"
 }
 catch {
     Write-Output "`e[31m----------------------------------------------------------------`e[0m";
@@ -70,6 +70,6 @@ finally {
     ce docker logout "$EcrRegistry"
     if ($true -eq $removeImage) {
         Write-Output "Removing image"
-        ce docker image rm "$IMAGE"
+        ce docker image rm "$Image"
     }
 }
