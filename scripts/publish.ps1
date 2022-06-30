@@ -59,7 +59,13 @@ try {
     sh -c "./actions-collection/scripts/trivy_scan.sh"
     Write-Output "End: Trivy Scan"
 
-    ce docker push "$Image"
+    if ($LASTEXITCODE -eq 0){
+        Write-Output "Start: Docker Push"
+        ce docker push "$Image"
+        Write-Output "End: Docker Push"
+    } else {
+        Write-Output "Skipping Docker Push because of critical errors in trivy scan!"
+    }
 }
 catch {
     Write-Output "`e[31m----------------------------------------------------------------`e[0m";
