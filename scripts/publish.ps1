@@ -57,7 +57,7 @@ try {
 
     Write-Output "Start: Trivy Scan"
     sh -c "./actions-collection/scripts/trivy_scan.sh"
-    Write-Output "End: Trivy Scan, exitcode: $LASTEXITCODE"
+    Write-Output "End: Trivy Scan"
 
     if ($LASTEXITCODE -eq 0){
         Write-Output "Start: Docker Push"
