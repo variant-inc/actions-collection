@@ -64,7 +64,7 @@ try {
         ce docker push "$Image"
         Write-Output "End: Docker Push"
     } else {
-        Write-Output "Skipping Docker Push because of critical errors in trivy scan!"
+        Write-Error "Skipping Docker Push because of critical errors in trivy scan!"
     }
 }
 catch {
