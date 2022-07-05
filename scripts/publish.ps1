@@ -62,11 +62,17 @@ try {
     ce docker push "$Image"
 }
 catch {
-    Write-Output "`e[31m----------------------------------------------------------------`e[0m";
-    Write-Output "`e[31m Error occured in build and publishing image`e[0m";
-    Write-Output "`e[31m----------------------------------------------------------------`e[0m";
+    $local_error_message = @("`e[31m----------------------------------------------------------------`e[0m"
+                            ,"`e[31m Error occurred in build and publishing image`e[0m"
+                            ,"`e[31m----------------------------------------------------------------`e[0m"
+    );
+    Write-Output "`e[31m Error occurred in build and publishing image`e[0m"
 }
 finally {
+    if ($local_error_message)
+    {
+        Write-Error "`r`n$($local_error_message -join "`r`n")"
+    }
     ce docker logout "$EcrRegistry"
     if ($true -eq $removeImage) {
         Write-Output "Removing image"
