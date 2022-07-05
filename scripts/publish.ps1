@@ -56,16 +56,10 @@ try {
     Invoke-Expression $expression
 
     Write-Output "Start: Trivy Scan"
-    sh -c "./actions-collection/scripts/trivy_scan.sh"
+    ce sh -c "./actions-collection/scripts/trivy_scan.sh"
     Write-Output "End: Trivy Scan"
 
-    if ($LASTEXITCODE -eq 0){
-        Write-Output "Start: Docker Push"
-        ce docker push "$Image"
-        Write-Output "End: Docker Push"
-    } else {
-        Write-Error "Skipping Docker Push because of critical errors in trivy scan!"
-    }
+    ce docker push "$Image"
 }
 catch {
     Write-Output "`e[31m----------------------------------------------------------------`e[0m";
