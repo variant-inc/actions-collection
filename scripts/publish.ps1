@@ -56,7 +56,7 @@ try {
     Invoke-Expression $expression
 
     Write-Output "Start: Trivy Scan"
-    sh -c "./actions-collection/scripts/trivy_scan.sh"
+    ce sh -c "./actions-collection/scripts/trivy_scan.sh"
     Write-Output "End: Trivy Scan"
 
     ce docker push "$Image"
