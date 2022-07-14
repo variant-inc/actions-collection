@@ -30,11 +30,13 @@ function CheckSonarRun {
     }
     $Response = Invoke-RestMethod -Uri $sonarCheckUrl `
         -Headers $headers -Method GET
-    $CommitSha = $Response.branches | Where-Object {
-        $_.name -in @($env:GITHUB_REF_NAME)
-    }  | Select-Object -First 1 -ExpandProperty commit
+    $Project = $Response.branches | Where-Object { $_.name -in $env:GITHUB_REF_NAME }
 
-    return ($env:GITHUB_SHA -eq $CommitSha.sha)
+    if ($Project.commit.length -eq 0) {
+        Write-Output "No commit found for $SONAR_PROJECT_KEY in branch $env:GITHUB_REF_NAME"
+        return false
+    }
+    return ($env:GITHUB_SHA -eq $Project.commit.sha)
 }
 
 if (![string]::IsNullOrEmpty($SONAR_PROJECT_KEY_INPUT)) {
