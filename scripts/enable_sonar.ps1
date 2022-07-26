@@ -2,7 +2,9 @@
 param (
     [Parameter()]
     [string]
-    $SONAR_PROJECT_KEY_INPUT
+    $SONAR_PROJECT_KEY_INPUT = $env:SONAR_PROJECT_KEY
+    ,[string]
+    $SONAR_PROJECT_NAME_INPUT = $env:SONAR_PROJECT_NAME
 )
 
 $ErrorActionPreference = "Stop"
@@ -95,7 +97,8 @@ function Get-SonarProjectOrCreate {
         if ($_.ErrorDetails.Message -match "not found") {
             Write-Information "Sonar project key $SONAR_PROJECT_KEY not found"
             Write-Information "Creating sonar project key: $SONAR_PROJECT_KEY"
-            Register-SonarProject -SONAR_PROJECT_KEY $SONAR_PROJECT_KEY -SONAR_PROJECT_NAME $SONAR_PROJECT_NAME
+            Write-Output "SONAR_PROJECT_KEY=$SONAR_PROJECT_KEY" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+            Register-SonarProject -SONAR_PROJECT_KEY $env:SONAR_PROJECT_KEY -SONAR_PROJECT_NAME $SONAR_PROJECT_NAME
         }
         else {
             throw "Some Unexpected Exception Occured"
@@ -104,13 +107,4 @@ function Get-SonarProjectOrCreate {
 
 }
 
-
-if (![string]::IsNullOrEmpty($SONAR_PROJECT_KEY_INPUT)) {
-    Write-Output "Checking for sonar project key input: $SONAR_PROJECT_KEY_INPUT"
-    Get-SonarProjectOrCreate -SONAR_PROJECT_KEY $SONAR_PROJECT_KEY_INPUT -SONAR_PROJECT_NAME $SONAR_PROJECT_KEY_INPUT
-} else {
-    Write-Output "No sonar project key input given using devops convention:$env:SONAR_PROJECT_KEY"
-    Get-SonarProjectOrCreate -SONAR_PROJECT_KEY $env:SONAR_PROJECT_KEY -SONAR_PROJECT_NAME $env:SONAR_PROJECT_KEY
-}
-
-
+Get-SonarProjectOrCreate -SONAR_PROJECT_KEY $SONAR_PROJECT_KEY_INPUT -SONAR_PROJECT_NAME $SONAR_PROJECT_NAME_INPUT
