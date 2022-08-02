@@ -3,7 +3,7 @@
 param (
     [Parameter()]
     [string]
-    $SONAR_PROJECT_KEY_INPUT
+    $SONAR_PROJECT_KEY_INPUT = $env:SONAR_PROJECT_KEY
 )
 
 $ErrorActionPreference = "Stop"
@@ -16,6 +16,7 @@ Trap {
     Write-Error $line -ErrorAction Continue
     Write-Error $_
 }
+
 function CheckSonarRun {
     [CmdletBinding()]
     param (
@@ -32,16 +33,11 @@ function CheckSonarRun {
         -Headers $headers -Method GET
     $Project = $Response.branches | Where-Object { $_.name -in $env:GITHUB_REF_NAME }
 
-    if ($Project.commit.length -eq 0) {
-        Write-Output "No commit found for $SONAR_PROJECT_KEY in branch $env:GITHUB_REF_NAME"
-        return false
+    if ($Project.commit.length -eq 0 -or $Project.status.qualityGateStatus -ne "OK") # no commit found or last scan did not pass
+    {
+        return $false
     }
     return ($env:GITHUB_SHA -eq $Project.commit.sha)
 }
 
-if (![string]::IsNullOrEmpty($SONAR_PROJECT_KEY_INPUT)) {
-    CheckSonarRun -SONAR_PROJECT_KEY $SONAR_PROJECT_KEY_INPUT
-}
-else {
-    CheckSonarRun -SONAR_PROJECT_KEY $env:SONAR_PROJECT_KEY
-}
+CheckSonarRun -SONAR_PROJECT_KEY $SONAR_PROJECT_KEY_INPUT
