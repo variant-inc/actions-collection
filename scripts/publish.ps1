@@ -34,7 +34,7 @@ Write-Output "IMAGE_NAME=$Image" | Out-File -FilePath $Env:GITHUB_ENV -Encoding 
 try {
     $ImageCount = aws ecr list-images --repository-name $env:INPUT_ECR_REPOSITORY | jq '.imageIds | unique_by(.imageDigest) | length'
     $ImageTags = aws ecr describe-images --repository-name $env:INPUT_ECR_REPOSITORY --max-items $ImageCount --query 'imageDetails[*].imageTags[0]'
-    if ($ImageTags -like "*$env:IMAGE_VERSION*") {
+    if ($ImageTags -like "*$env:IMAGE_VERSION") {
         Write-Output "Image already pushed. Skipping docker push"
         $removeImage = $false
         exit 0
