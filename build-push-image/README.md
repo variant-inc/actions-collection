@@ -18,7 +18,7 @@ required env:
 | --- | --- | --- | --- |
 | dockerfile_dir_path | Directory path to the dockerfile | `false` | . |
 | ecr_repository | ECR repository name | `true` |  |
-| aws_region | Region where the image will be created. Defaults to us-east-2  | `false` | us-east-2 |
+| aws_region | Region where the image will be created. Defaults to us-east-2.  | `false` | us-east-2 |
 <!-- action-docs-inputs -->
 <!-- markdownlint-enable line-length -->
 
@@ -31,3 +31,11 @@ required env:
 
 This action is a `composite` action.
 <!-- action-docs-runs -->
+
+## Usage
+
+```yaml
+- uses: variant-inc/actions-collection/build-push-image@v1
+  with:
+    ecr_repository: demo/example
+```

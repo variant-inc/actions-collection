@@ -17,7 +17,7 @@ inputs:
   aws_region:
     description: >
       Region where the image will be created.
-      Defaults to us-east-2
+      Defaults to us-east-2.
     default: us-east-2
     required: false
 runs:
