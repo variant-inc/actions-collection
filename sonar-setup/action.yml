@@ -1,4 +1,5 @@
-name: "Setup Sonar Action"
+---
+name: Setup Sonar Action
 description: >
   This Action sets some variables and necessities for sonar
 
@@ -10,13 +11,13 @@ description: >
     GITHUB_TOKEN
 outputs:
   wait_flag:
-    description: "Fail Build if Sonarscan fails"
+    description: Fail Build if Sonarscan fails
     value: ${{ steps.flags.outputs.wait_flag }}
   sonar_skip:
-    description: "Skip Sonarscan"
+    description: Skip Sonarscan
     value: ${{ steps.flags.outputs.sonar_skip }}
 runs:
-  using: "composite"
+  using: composite
   steps:
     - name: Sonar Flags
       id: flags

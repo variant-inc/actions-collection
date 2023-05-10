@@ -1,4 +1,6 @@
-name: "Build Push Image"
+---
+# yamllint disable rule:line-length
+name: Build Push Image
 description: >
   Build the Image and Push to ECR Repository
 
@@ -8,11 +10,11 @@ description: >
     SECRET__LAZY_API_KEY
 inputs:
   dockerfile_dir_path:
-    description: "Directory path to the dockerfile"
+    description: Directory path to the dockerfile
     required: false
-    default: "."
+    default: .
   ecr_repository:
-    description: "ECR repository name"
+    description: ECR repository name
     required: true
   aws_region:
     description: >
@@ -21,7 +23,7 @@ inputs:
     default: us-east-2
     required: false
 runs:
-  using: "composite"
+  using: composite
   steps:
     - name: Create ECR if not exists
       shell: bash
@@ -51,7 +53,7 @@ runs:
 
     - name: Login to Amazon ECR
       id: ecr
-      uses: aws-actions/amazon-ecr-login@v2
+      uses: aws-actions/amazon-ecr-login@v1
 
     - name: Setup Container Build
       shell: pwsh
@@ -116,8 +118,8 @@ runs:
         scan-type: image
         image-ref: ${{ steps.setup-build.outputs.ecr-image }}:${{ env.IMAGE_VERSION }}
         ignore-unfixed: true
-        exit-code: "1"
-        severity: "CRITICAL"
+        exit-code: '1'
+        severity: CRITICAL
         github-pat: ${{ env.SECRET__GITHUB_TOKEN }}
         timeout: 10m
         cache-dir: .trivy
