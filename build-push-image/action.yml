@@ -55,85 +55,25 @@ runs:
       id: ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Setup Container Build
-      shell: pwsh
-      id: setup-build
+    - name: Check if docker container built
+      id: docker-setup
+      shell: bash
       env:
         ECR_REGISTRY: ${{ steps.ecr.outputs.registry }}
         ECR_REPOSITORY: ${{ inputs.ecr_repository }}
-      run: |
-        $EOF = [Convert]::ToBase64String((1..10|%{[byte](Get-Random -Max 256)}))
-        $BuildArgs = ""
-        Add-Content -Path ${env:GITHUB_OUTPUT} -Encoding utf8 -Value "build_args<<$EOF"
-        Get-ChildItem env:* | Sort-Object name  | ForEach-Object {
-            $BuildArgs += "$($_.Name)=$($_.Value)`n"
-        }
-        $BuildArgs = $BuildArgs.Trim()
-        Add-Content -Path ${env:GITHUB_OUTPUT} -Encoding utf8 -Value "$BuildArgs"
-        Add-Content -Path ${env:GITHUB_OUTPUT} -Encoding utf8 -Value "$EOF"
+      run: ${{ github.action_path }}/check_tag_exists.sh
 
-        $Image = "$env:ECR_REGISTRY/$env:ECR_REPOSITORY"
-        Add-Content -Path ${env:GITHUB_OUTPUT} -Encoding utf8 -Value "ecr-image=$Image"
-
-        ## Used by cake-runner
-        Add-Content -Path ${env:GITHUB_ENV} -Encoding utf8 -Value "IMAGE_NAME=${Image}:${env:IMAGE_VERSION}"
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-    - uses: docker/metadata-action@v4
-      id: metadata
-      with:
-        images: ${{ steps.setup-build.outputs.ecr-image }}
-        tags: |
-          type=schedule,enable=true
-          type=semver,enable=true,pattern={{version}}
-          type=semver,enable=true,pattern={{major}}.{{minor}}
-          type=semver,enable=true,pattern={{major}}
-          type=raw,enable=true,value=${{ env.IMAGE_VERSION }}
-          type=ref,enable=true,event=branch
-          type=ref,enable=true,event=pr
-          type=sha,enable=true
-
-    - uses: docker/build-push-action@v3
-      name: Build Container
-      with:
-        push: false
-        load: true
-        tags: ${{ steps.metadata.outputs.tags }}
-        labels: ${{ steps.metadata.outputs.labels }}
-        build-args: |
-          ${{ steps.setup-build.outputs.build_args }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-
-    - uses: actions/cache@v3
-      with:
-        path: .trivy
-        key: ${{ runner.os }}-trivy-${{ github.run_id }}
-        restore-keys: |
-          ${{ runner.os }}-trivy-
-    - name: Run Trivy vulnerability image scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: image
-        image-ref: ${{ steps.setup-build.outputs.ecr-image }}:${{ env.IMAGE_VERSION }}
-        ignore-unfixed: true
-        exit-code: '1'
-        severity: CRITICAL
-        github-pat: ${{ env.SECRET__GITHUB_TOKEN }}
-        timeout: 10m
-        cache-dir: .trivy
-    - name: Correct Trivy cache permissions
+    - name: Get Build Push Action
       shell: bash
-      run: sudo chown -R $USER:$GROUP .trivy
+      run: |
+        mkdir -p ./.github/workflows/actions-collection/build-push-image/build-push-core
+        cp -R ${{ github.action_path }}/build-push-core/* \
+          ./.github/workflows/actions-collection/build-push-image/build-push-core
 
-    - uses: docker/build-push-action@v3
-      name: Push Container
+    - name: Build & Push Container Core
+      uses: ./.github/workflows/actions-collection/build-push-image/build-push-core
+      if: ${{ steps.docker-setup.outputs.docker_skip != 'True' }}
       with:
-        push: true
-        tags: ${{ steps.metadata.outputs.tags }}
-        labels: ${{ steps.metadata.outputs.labels }}
-        build-args: |
-          ${{ steps.setup-build.outputs.build_args }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        dockerfile_dir_path: ${{ inputs.python-version }}
+        ecr_registry: ${{ steps.ecr.outputs.registry }}
+        ecr_repository: ${{ inputs.ecr_repository }}
