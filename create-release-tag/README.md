@@ -1,28 +1,24 @@
-# Sonar Setup
+# Build Push Image Action
 
 <!-- action-docs-description -->
 ## Description
 
-This Action sets some variables and necessities for sonar
-Required env:
-  SONAR_PROJECT_KEY
-  SONAR_PROJECT_NAME
-  SECRET__SONAR_TOKEN
-  GITHUB_REPOSITORY
-  GITHUB_TOKEN
+This Action creates tags & release when merged to Master/Main.
+If tag/release already exists, then it is updated.
 <!-- action-docs-description -->
 
+<!-- markdownlint-disable line-length -->
 <!-- action-docs-inputs -->
+## Inputs
 
+| parameter | description | required | default |
+| --- | --- | --- | --- |
+| create_release | Creates Release if true | `false` | True |
 <!-- action-docs-inputs -->
+<!-- markdownlint-enable line-length -->
 
 <!-- action-docs-outputs -->
-## Outputs
 
-| parameter | description |
-| --- | --- |
-| wait_flag | Fail Build if Sonarscan fails |
-| sonar_skip | Skip Sonarscan |
 <!-- action-docs-outputs -->
 
 <!-- action-docs-runs -->
