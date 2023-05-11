@@ -36,7 +36,7 @@ This action is a `composite` action.
 ```yaml
 - name: Sonar Setup
   id: sonar-setup
-  uses: variant-inc/actions-collection/sonar-setup@f/v2
+  uses: variant-inc/actions-collection/sonar-setup@v2
   env:
     SONAR_PROJECT_KEY:
     SONAR_PROJECT_NAME:

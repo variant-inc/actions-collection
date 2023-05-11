@@ -35,7 +35,7 @@ This action is a `composite` action.
 ## Usage
 
 ```yaml
-- uses: variant-inc/actions-collection/build-push-image@v1
+- uses: variant-inc/actions-collection/build-push-image@v2
   with:
     ecr_repository: demo/example
 ```
