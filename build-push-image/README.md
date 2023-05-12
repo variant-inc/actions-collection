@@ -4,10 +4,33 @@
 ## Description
 
 Build the Image and Push to ECR Repository
+
 required env:
   IMAGE_VERSION
-  SECRET__LAZY_API_URL
-  SECRET__LAZY_API_KEY
+  LAZY_API_URL
+  LAZY_API_KEY
+
+## Permissions
+
+Add the following permissions to the job
+
+```yaml
+permissions:
+  id-token: write
+  contents: read
+```
+
+## Usage
+
+```yaml
+- uses: variant-inc/actions-collection/build-push-image@v2
+  with:
+    ecr_repository: demo/example
+  env:
+    IMAGE_VERSION
+    LAZY_API_URL
+    LAZY_API_KEY
+```
 <!-- action-docs-description -->
 
 <!-- markdownlint-disable line-length -->
@@ -31,11 +54,3 @@ required env:
 
 This action is a `composite` action.
 <!-- action-docs-runs -->
-
-## Usage
-
-```yaml
-- uses: variant-inc/actions-collection/build-push-image@v2
-  with:
-    ecr_repository: demo/example
-```

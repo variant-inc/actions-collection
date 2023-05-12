@@ -4,12 +4,23 @@
 ## Description
 
 This Action sets some variables and necessities for sonar
+
 Required env:
   SONAR_PROJECT_KEY
   SONAR_PROJECT_NAME
-  SECRET__SONAR_TOKEN
-  GITHUB_REPOSITORY
-  GITHUB_TOKEN
+  SONAR_TOKEN
+
+## Usage
+
+```yaml
+- name: Sonar Setup
+  id: sonar-setup
+  uses: variant-inc/actions-collection/sonar-setup@v2
+  env:
+    SONAR_PROJECT_KEY:
+    SONAR_PROJECT_NAME:
+    SONAR_TOKEN:
+```
 <!-- action-docs-description -->
 
 <!-- action-docs-inputs -->
@@ -30,17 +41,3 @@ Required env:
 
 This action is a `composite` action.
 <!-- action-docs-runs -->
-
-## Usage
-
-```yaml
-- name: Sonar Setup
-  id: sonar-setup
-  uses: variant-inc/actions-collection/sonar-setup@v2
-  env:
-    SONAR_PROJECT_KEY:
-    SONAR_PROJECT_NAME:
-    SECRET__SONAR_TOKEN:
-    GITHUB_REPOSITORY:
-    GITHUB_TOKEN:
-```

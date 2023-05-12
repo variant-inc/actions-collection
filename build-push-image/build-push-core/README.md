@@ -14,9 +14,9 @@ required env:
 
 | parameter | description | required | default |
 | --- | --- | --- | --- |
-| dockerfile_dir_path | Directory path to the dockerfile | `false` | . |
-| ecr_registry | ECR repository name | `true` |  |
-| ecr_repository | ECR repository name | `true` |  |
+| dockerfile_dir_path | Directory Path to the dockerfile | `false` | . |
+| ecr_registry | ECR Registry ID | `true` |  |
+| ecr_repository | ECR Repository Name | `true` |  |
 <!-- action-docs-inputs -->
 <!-- markdownlint-enable line-length -->
 

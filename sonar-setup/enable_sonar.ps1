@@ -12,7 +12,7 @@ Trap
 
 $SonarUrl = "https://sonarcloud.io"
 $SonarHeaders = @{
-  'Authorization' = 'Bearer ' + $env:SECRET__SONAR_TOKEN
+  'Authorization' = 'Bearer ' + $env:SONAR_TOKEN
   'Accept'        = 'application/json'
 }
 
@@ -46,18 +46,6 @@ catch
 
 if (!$SonarProjectExists)
 {
-  Write-Information "Creating sonar project key: $env:SONAR_PROJECT_KEY."
-  Write-Output "::debug::Fetching Repository ID"
-  $GithubRepoUrl = "https://api.github.com/repos/$env:GITHUB_REPOSITORY"
-  $GithubHeaders = @{
-    'Authorization' = 'Bearer ' + $env:GITHUB_TOKEN
-    'Accept'        = 'application/json'
-  }
-  $GitResponse = Invoke-RestMethod -Uri $GithubRepoUrl `
-    -Headers $GithubHeaders -Method GET
-  $RepoId = $GitResponse.id
-  Write-Output "::debug::Received Repo ID: $RepoId"
-
   Write-Output "Creating sonar project for key $env:SONAR_PROJECT_KEY."
   $sonarCreateUrl = "https://sonarcloud.io/api/alm_integration/provision_monorepo_projects"
 
@@ -67,7 +55,7 @@ if (!$SonarProjectExists)
       @{
         projectKey      = $env:SONAR_PROJECT_KEY
         projectName     = $env:SONAR_PROJECT_NAME
-        installationKey = $env:GITHUB_REPOSITORY + '|' + $RepoId
+        installationKey = $env:GITHUB_REPOSITORY + '|' + $env:GITHUB_REPOSITORY_ID
       }
     )
   }

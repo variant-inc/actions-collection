@@ -5,6 +5,24 @@
 
 This Action creates tags & release when merged to Master/Main.
 If tag/release already exists, then it is updated.
+
+## Permissions
+
+Add the following permissions to the job
+
+```yaml
+permissions:
+  contents: write
+```
+
+## Usage
+
+```yaml
+- name: Create Release Action
+  uses: variant-inc/actions-collection/create-release-tag@v2
+  with:
+    create_release: 'true'
+```
 <!-- action-docs-description -->
 
 <!-- markdownlint-disable line-length -->
@@ -13,7 +31,7 @@ If tag/release already exists, then it is updated.
 
 | parameter | description | required | default |
 | --- | --- | --- | --- |
-| create_release | Creates Release if true | `false` | True |
+| create_release | Creates Release if true | `false` | true |
 <!-- action-docs-inputs -->
 <!-- markdownlint-enable line-length -->
 
@@ -26,17 +44,3 @@ If tag/release already exists, then it is updated.
 
 This action is a `composite` action.
 <!-- action-docs-runs -->
-
-## Usage
-
-```yaml
-- name: Sonar Setup
-  id: sonar-setup
-  uses: variant-inc/actions-collection/sonar-setup@v2
-  env:
-    SONAR_PROJECT_KEY:
-    SONAR_PROJECT_NAME:
-    SECRET__SONAR_TOKEN:
-    GITHUB_REPOSITORY:
-    GITHUB_TOKEN:
-```

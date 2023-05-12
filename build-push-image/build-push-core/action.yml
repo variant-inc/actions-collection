@@ -8,14 +8,14 @@ description: >
     IMAGE_VERSION
 inputs:
   dockerfile_dir_path:
-    description: Directory path to the dockerfile
+    description: Directory Path to the dockerfile
     required: false
     default: .
   ecr_registry:
-    description: ECR repository name
+    description: ECR Registry ID
     required: true
   ecr_repository:
-    description: ECR repository name
+    description: ECR Repository Name
     required: true
 runs:
   using: composite
@@ -27,6 +27,7 @@ runs:
         ECR_REGISTRY: ${{ inputs.ecr_registry }}
         ECR_REPOSITORY: ${{ inputs.ecr_repository }}
       run: |
+        ## Create BuildArgs for docker build from environment variables
         $EOF = [Convert]::ToBase64String((1..10|%{[byte](Get-Random -Max 256)}))
         $BuildArgs = ""
         Add-Content -Path ${env:GITHUB_OUTPUT} -Encoding utf8 -Value "build_args<<$EOF"
@@ -60,7 +61,7 @@ runs:
           type=sha,enable=true
 
     - uses: docker/build-push-action@v3
-      name: Build Container
+      name: Build Container Image
       with:
         context: ${{ inputs.dockerfile_dir_path }}
         push: false
@@ -73,6 +74,7 @@ runs:
         cache-to: type=gha,mode=max
 
     - uses: actions/cache@v3
+      name: Cache Trivy Database
       with:
         path: .trivy
         key: ${{ runner.os }}-trivy-${{ github.run_id }}
@@ -86,7 +88,7 @@ runs:
         ignore-unfixed: true
         exit-code: '1'
         severity: CRITICAL
-        github-pat: ${{ env.SECRET__GITHUB_TOKEN }}
+        github-pat: ${{ env.GITHUB_TOKEN }}
         timeout: 10m
         cache-dir: .trivy
     - name: Correct Trivy cache permissions
@@ -94,7 +96,7 @@ runs:
       run: sudo chown -R $USER:$GROUP .trivy
 
     - uses: docker/build-push-action@v3
-      name: Push Container
+      name: Push Container Image
       with:
         context: ${{ inputs.dockerfile_dir_path }}
         push: true

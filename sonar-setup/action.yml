@@ -1,14 +1,24 @@
 ---
 name: Setup Sonar Action
-description: >
+description: |
   This Action sets some variables and necessities for sonar
 
   Required env:
     SONAR_PROJECT_KEY
     SONAR_PROJECT_NAME
-    SECRET__SONAR_TOKEN
-    GITHUB_REPOSITORY
-    GITHUB_TOKEN
+    SONAR_TOKEN
+
+  ## Usage
+
+  ```yaml
+  - name: Sonar Setup
+    id: sonar-setup
+    uses: variant-inc/actions-collection/sonar-setup@v2
+    env:
+      SONAR_PROJECT_KEY:
+      SONAR_PROJECT_NAME:
+      SONAR_TOKEN:
+  ```
 outputs:
   wait_flag:
     description: Fail Build if Sonarscan fails
@@ -36,5 +46,3 @@ runs:
     - name: Create Sonar Project if not exists
       shell: pwsh
       run: ${{ github.action_path }}/enable_sonar.ps1
-      env:
-        SONAR_TOKEN: ${{ env.SECRET__SONAR_TOKEN }}

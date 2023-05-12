@@ -9,13 +9,13 @@ IMAGE_META="$(aws ecr describe-images \
 
 if [[ -n $IMAGE_META ]]; then
     if echo "${IMAGE_META}" | jq '.imageDetails[0].imageTags' | grep -q \""$IMAGE_VERSION"\"; then
-        echo "$1 found"
+        echo "$IMAGE_VERSION exists at $ECR_REPOSITORY repository"
         docker_skip="True"
     else
         echo "$IMAGE_VERSION not found or the JSON response changed"
     fi
 else
-    echo "$1 not found. Please check if the image for this branch has been built and the CI/CD job finished successfuly."
+    echo "$IMAGE_VERSION not found. Please check if the image for this branch has been built and the CI/CD job finished successfuly."
 fi
 
 echo "docker_skip=$docker_skip" >>"$GITHUB_OUTPUT"
