@@ -1,0 +1,46 @@
+---
+# yamllint disable rule:line-length
+name: Create Tag & Release
+description: |
+  This Action creates tags & release when merged to Master/Main.
+  If tag/release already exists, then it is updated.
+
+  ## Permissions
+
+  Add the following permissions to the job
+
+  ```yaml
+  permissions:
+    contents: write
+  ```
+
+  ## Usage
+
+  ```yaml
+  - name: Create Release Action
+    uses: variant-inc/actions-collection/create-release-tag@v2
+    with:
+      create_release: 'true'
+  ```
+inputs:
+  create_release:
+    description: Creates Release if true
+    required: false
+    default: 'true'
+runs:
+  using: composite
+  steps:
+    - name: Create or Update tags
+      uses: actions/github-script@v6
+      if: ${{ env.GITVERSION_PRERELEASETAG != '' && env.GITVERSION_PRERELEASELABEL == '' }}
+      with:
+        script: |
+          const script = require('${{ github.action_path }}/tags.js')
+          await script({github, context})
+    - name: Create or Update Release
+      uses: actions/github-script@v6
+      if: ${{ env.GITVERSION_PRERELEASETAG != '' && env.GITVERSION_PRERELEASELABEL == '' && inputs.create_release == 'true' }}
+      with:
+        script: |
+          const script = require('${{ github.action_path }}/release.js')
+          await script({github, context})

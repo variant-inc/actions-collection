@@ -1,0 +1,28 @@
+---
+# yamllint disable rule:line-length
+name: Release
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  Release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0
+        with:
+          versionSpec: 5.x
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@v0
+        with:
+          useConfigFile: true
+      - uses: ./create-release-tag

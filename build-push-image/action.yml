@@ -1,0 +1,101 @@
+---
+# yamllint disable rule:line-length
+name: Build Push Image
+description: |
+  Build the Image and Push to ECR Repository
+
+  required env:
+    IMAGE_VERSION
+    LAZY_API_URL
+    LAZY_API_KEY
+
+  ## Permissions
+
+  Add the following permissions to the job
+
+  ```yaml
+  permissions:
+    id-token: write
+    contents: read
+  ```
+
+  ## Usage
+
+  ```yaml
+  - uses: variant-inc/actions-collection/build-push-image@v2
+    with:
+      ecr_repository: demo/example
+    env:
+      IMAGE_VERSION
+      LAZY_API_URL
+      LAZY_API_KEY
+  ```
+inputs:
+  dockerfile_dir_path:
+    description: Directory path to the dockerfile
+    required: false
+    default: .
+  ecr_repository:
+    description: ECR repository name
+    required: true
+  aws_region:
+    description: >
+      Region where the image will be created.
+      Defaults to us-east-2.
+    default: us-east-2
+    required: false
+runs:
+  using: composite
+  steps:
+    - name: Create ECR if not exists
+      shell: bash
+      env:
+        ECR_REPOSITORY: ${{ inputs.ecr_repository }}
+        AWS_REGION: ${{ inputs.aws_region }}
+      run: ${{ github.action_path }}/ecr_create.sh
+
+    - name: Download .trivyignore
+      shell: bash
+      run: |
+        aws s3 cp s3://trivy-ops/.trivyignore .
+        echo "::debug::Checking for .trivyignore specific to $GITHUB_REPOSITORY"
+        aws s3 cp "s3://trivy-ops/${GITHUB_REPOSITORY}/.trivyignore" .trivyignore.repository || {
+          exit 0
+        }
+        cat .trivyignore.repository >> .trivyignore
+        echo "::group::.trivyignore contents"
+        cat .trivyignore
+        echo "::endgroup::"
+
+    - name: Configure AWS credentials for ECR
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: arn:aws:iam::064859874041:role/eks-github-runner
+        aws-region: ${{ inputs.aws_region }}
+
+    - name: Login to Amazon ECR
+      id: ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Check if tag already exists
+      id: docker-setup
+      shell: bash
+      env:
+        ECR_REGISTRY: ${{ steps.ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ inputs.ecr_repository }}
+      run: ${{ github.action_path }}/check_tag_exists.sh
+
+    - name: Get Build Push Action
+      shell: bash
+      run: |
+        mkdir -p ./.github/workflows/actions-collection/build-push-image/build-push-core
+        cp -R ${{ github.action_path }}/build-push-core/* \
+          ./.github/workflows/actions-collection/build-push-image/build-push-core
+
+    - name: Build & Push Container Core
+      uses: ./.github/workflows/actions-collection/build-push-image/build-push-core
+      if: ${{ steps.docker-setup.outputs.docker_skip != 'True' }}
+      with:
+        dockerfile_dir_path: ${{ inputs.python-version }}
+        ecr_registry: ${{ steps.ecr.outputs.registry }}
+        ecr_repository: ${{ inputs.ecr_repository }}

@@ -1,0 +1,48 @@
+---
+name: Setup Sonar Action
+description: |
+  This Action sets some variables and necessities for sonar
+
+  Required env:
+    SONAR_PROJECT_KEY
+    SONAR_PROJECT_NAME
+    SONAR_TOKEN
+
+  ## Usage
+
+  ```yaml
+  - name: Sonar Setup
+    id: sonar-setup
+    uses: variant-inc/actions-collection/sonar-setup@v2
+    env:
+      SONAR_PROJECT_KEY:
+      SONAR_PROJECT_NAME:
+      SONAR_TOKEN:
+  ```
+outputs:
+  wait_flag:
+    description: Fail Build if Sonarscan fails
+    value: ${{ steps.flags.outputs.wait_flag }}
+  sonar_skip:
+    description: Skip Sonarscan
+    value: ${{ steps.flags.outputs.sonar_skip }}
+runs:
+  using: composite
+  steps:
+    - name: Sonar Flags
+      id: flags
+      shell: bash
+      run: |
+        wait_flag="false"
+        if [ "$GitVersion_PreReleaseLabel" == "" ]; then
+          wait_flag="true"
+        fi
+        echo "wait_flag=$WAIT_FLAG" >> $GITHUB_OUTPUT
+        echo "wait_flag=$wait_flag"
+
+        skip_sonar_run=$(pwsh ${{ github.action_path }}/skip_sonar_run.ps1)
+        echo "sonar_skip=$skip_sonar_run" >> $GITHUB_OUTPUT
+        echo "sonar_skip=$sonar_skip"
+    - name: Create Sonar Project if not exists
+      shell: pwsh
+      run: ${{ github.action_path }}/enable_sonar.ps1
