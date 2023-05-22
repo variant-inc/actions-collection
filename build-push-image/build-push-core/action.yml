@@ -82,6 +82,7 @@ runs:
           ${{ runner.os }}-trivy-
     - name: Run Trivy vulnerability image scanner
       uses: aquasecurity/trivy-action@master
+      id: trivy
       with:
         scan-type: image
         image-ref: ${{ steps.setup-build.outputs.ecr-image }}:${{ env.IMAGE_VERSION }}
@@ -91,6 +92,15 @@ runs:
         github-pat: ${{ env.GITHUB_TOKEN }}
         timeout: 10m
         cache-dir: .trivy
+    - name: Set Summary
+      shell: bash
+      if: ${{ failure() && steps.trivy.conclusion == 'failure' }}
+      run: |
+        cat <<EOT >> $GITHUB_STEP_SUMMARY
+          ## Vulnerability Scan Failed
+          Check the results to see if there are any critical errors and fix them.
+          If it is something else, check with #cloudops.
+        EOT
     - name: Correct Trivy cache permissions
       shell: bash
       run: sudo chown -R $USER:$GROUP .trivy
@@ -106,3 +116,9 @@ runs:
           ${{ steps.setup-build.outputs.build_args }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
+    - name: Set Summary
+      shell: bash
+      run: |
+        echo "## Image Created" >> $GITHUB_STEP_SUMMARY
+        echo "${{ steps.setup-build.outputs.ecr-image }}:${{ env.IMAGE_VERSION }}" >> $GITHUB_STEP_SUMMARY
