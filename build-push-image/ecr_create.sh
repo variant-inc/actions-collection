@@ -8,7 +8,7 @@ echo "::debug::URL_ECR_REPOSITORY: $url_encoded_ecr_repository"
 
 {
     curl -sSfL "https://$LAZY_API_URL/tenants/apps/profiles/production/regions/$AWS_REGION/ecr/repo/$url_encoded_ecr_repository/repo-policy" \
-      --header "x-api-key: $LAZY_API_KEY"
+        --header "x-api-key: $LAZY_API_KEY"
 } ||
 {
     echo "Repository $ECR_REPOSITORY was not found"
@@ -27,6 +27,6 @@ EOF
     )
     echo "::debug::$(curl -sSfL -X POST \
       "https://$LAZY_API_URL/tenants/apps/profiles/production/regions/$AWS_REGION/ecr/repo" \
-      -d "$data")"
+      -d "$data" --header "x-api-key: $LAZY_API_KEY" --header "Content-Type: application/json")"
     echo "::notice::ECR Repository $ECR_REPOSITORY already created"
 }
