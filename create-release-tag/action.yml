@@ -39,7 +39,8 @@ runs:
           await script({github, context})
     - name: Create or Update Release
       uses: actions/github-script@v6
-      if: ${{ env.GITHUB_REF_TYPE == 'branch' && env.GITVERSION_PRERELEASETAG != '' && env.GITVERSION_PRERELEASELABEL == '' && inputs.create_release == 'true' }}
+      if: ${{ env.GITHUB_REF_TYPE == 'branch' && env.GITVERSION_PRERELEASETAG != '' && env.GITVERSION_PRERELEASELABEL == '' && inputs.create_release ==
+        'true' }}
       with:
         script: |
           const script = require('${{ github.action_path }}/release.js')

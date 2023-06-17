@@ -16,12 +16,19 @@ $headers = @{
   'Authorization' = 'Bearer ' + $env:SONAR_TOKEN
   'Accept'        = 'application/json'
 }
-$Response = Invoke-RestMethod -Uri $sonarCheckUrl `
-  -Headers $headers -Method GET
-$Project = $Response.branches | Where-Object { $_.name -in $env:GITHUB_REF_NAME }
+try
+{
+  $Response = Invoke-RestMethod -Uri $sonarCheckUrl `
+    -Headers $headers -Method GET
+  $Project = $Response.branches | Where-Object { $_.name -in $env:GITHUB_REF_NAME }
 
-if ($Project.commit.length -eq 0 -or $Project.status.qualityGateStatus -ne "OK") # no commit found or last scan did not pass
+  if ($Project.commit.length -eq 0 -or $Project.status.qualityGateStatus -ne "OK") # no commit found or last scan did not pass
+  {
+    return $false
+  }
+  return ($env:GITHUB_SHA -eq $Project.commit.sha)
+}
+catch
 {
   return $false
 }
-return ($env:GITHUB_SHA -eq $Project.commit.sha)
