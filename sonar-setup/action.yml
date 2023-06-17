@@ -29,6 +29,9 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Create Sonar Project if not exists
+      shell: pwsh
+      run: ${{ github.action_path }}/enable_sonar.ps1
     - name: Sonar Flags
       id: flags
       shell: bash
@@ -43,6 +46,3 @@ runs:
         skip_sonar_run=$(pwsh ${{ github.action_path }}/skip_sonar_run.ps1)
         echo "sonar_skip=$skip_sonar_run" >> $GITHUB_OUTPUT
         echo "sonar_skip=$sonar_skip"
-    - name: Create Sonar Project if not exists
-      shell: pwsh
-      run: ${{ github.action_path }}/enable_sonar.ps1

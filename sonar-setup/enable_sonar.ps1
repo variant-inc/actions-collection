@@ -36,7 +36,6 @@ catch
   if ($_.ErrorDetails.Message -match "not found")
   {
     Write-Information "::notice::Sonar project key $env:SONAR_PROJECT_KEY not found."
-    Register-SonarProject -SONAR_PROJECT_KEY $env:SONAR_PROJECT_KEY -SONAR_PROJECT_NAME $env:SONAR_PROJECT_NAME
   }
   else
   {
