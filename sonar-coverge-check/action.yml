@@ -1,0 +1,25 @@
+---
+name: Sonar Coverage Check
+description: |
+  This Action check for existance of coverage report.
+
+  Required env:
+    SONAR_PROJECT_KEY
+    SONAR_TOKEN
+
+  ## Usage
+
+  ```yaml
+  - name: Sonar Coverage Check
+    id: sonar-coverage-check
+    uses: variant-inc/actions-collection/sonar-coverage-check@v2
+    env:
+      SONAR_PROJECT_KEY:
+      SONAR_TOKEN:
+  ```
+runs:
+  using: composite
+  steps:
+    - name: Create Sonar Project if not exists
+      shell: pwsh
+      run: ${{ github.action_path }}/check_coverage.ps1
