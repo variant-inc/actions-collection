@@ -20,6 +20,9 @@ description: |
 runs:
   using: composite
   steps:
-    - name: Create Sonar Project if not exists
+    - name: Check Sonar coverage existance
       shell: pwsh
-      run: ${{ github.action_path }}/check_coverage.ps1
+      run: |
+        if ("$env:GitVersion_PreReleaseLabel" -eq "") {
+          ${{ github.action_path }}/check_coverage.ps1
+        }
