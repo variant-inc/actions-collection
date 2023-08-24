@@ -92,6 +92,13 @@ runs:
         cp -R ${{ github.action_path }}/build-push-core/* \
           ./.github/workflows/actions-collection/build-push-image/build-push-core
 
+    - name: Set Image Name
+      shell: pwsh
+      run: |
+        ## Used by cake-runner
+        $Image = "${{ steps.ecr.outputs.registry }}/${{ inputs.ecr_repository }}"
+        Add-Content -Path ${env:GITHUB_ENV} -Encoding utf8 -Value "IMAGE_NAME=${Image}:${env:IMAGE_VERSION}"
+
     - name: Build & Push Container Core
       uses: ./.github/workflows/actions-collection/build-push-image/build-push-core
       if: ${{ steps.docker-setup.outputs.docker_skip != 'True' }}
