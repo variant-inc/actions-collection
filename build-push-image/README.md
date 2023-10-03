@@ -42,6 +42,7 @@ permissions:
 | dockerfile_dir_path | Directory path to the dockerfile | `false` | . |
 | ecr_repository | ECR repository name | `true` |  |
 | aws_region | Region where the image will be created. Defaults to us-east-2.  | `false` | us-east-2 |
+| ignore_trivy | Ignore Trivy Scanning | `false` | false |
 <!-- action-docs-inputs -->
 <!-- markdownlint-enable line-length -->
 

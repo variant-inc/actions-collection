@@ -17,6 +17,7 @@ required env:
 | dockerfile_dir_path | Directory Path to the dockerfile | `false` | . |
 | ecr_registry | ECR Registry ID | `true` |  |
 | ecr_repository | ECR Repository Name | `true` |  |
+| ignore_trivy | Ignore Trivy Scanning | `false` | false |
 <!-- action-docs-inputs -->
 <!-- markdownlint-enable line-length -->
 

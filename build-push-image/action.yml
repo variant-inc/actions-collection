@@ -44,6 +44,10 @@ inputs:
       Defaults to us-east-2.
     default: us-east-2
     required: false
+  ignore_trivy:
+    description: Ignore Trivy Scanning
+    default: 'false'
+    required: false
 runs:
   using: composite
   steps:
@@ -106,3 +110,4 @@ runs:
         dockerfile_dir_path: ${{ inputs.python-version }}
         ecr_registry: ${{ steps.ecr.outputs.registry }}
         ecr_repository: ${{ inputs.ecr_repository }}
+        ignore_trivy: ${{ inputs.ignore_trivy }}

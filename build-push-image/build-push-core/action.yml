@@ -17,6 +17,10 @@ inputs:
   ecr_repository:
     description: ECR Repository Name
     required: true
+  ignore_trivy:
+    description: Ignore Trivy Scanning
+    default: 'false'
+    required: false
 runs:
   using: composite
   steps:
@@ -72,6 +76,7 @@ runs:
 
     - uses: actions/cache@v3
       name: Cache Trivy Database
+      if: ${{ inputs.ignore_trivy != 'true' }}
       with:
         path: .trivy
         key: ${{ runner.os }}-trivy-${{ github.run_id }}
@@ -80,6 +85,7 @@ runs:
     - name: Run Trivy vulnerability image scanner
       uses: aquasecurity/trivy-action@master
       id: trivy
+      if: ${{ inputs.ignore_trivy != 'true' }}
       with:
         scan-type: image
         image-ref: ${{ steps.setup-build.outputs.ecr-image }}:${{ env.IMAGE_VERSION }}
@@ -91,7 +97,7 @@ runs:
         cache-dir: .trivy
     - name: Set Summary
       shell: bash
-      if: ${{ failure() && steps.trivy.conclusion == 'failure' }}
+      if: ${{ inputs.ignore_trivy != 'true' && failure() && steps.trivy.conclusion == 'failure' }}
       run: |
         cat <<EOT >> $GITHUB_STEP_SUMMARY
           ## Vulnerability Scan Failed
@@ -100,6 +106,7 @@ runs:
         EOT
     - name: Correct Trivy cache permissions
       shell: bash
+      if: ${{ inputs.ignore_trivy != 'true' }}
       run: sudo chown -R $USER:$GROUP .trivy
 
     - uses: docker/build-push-action@v3
