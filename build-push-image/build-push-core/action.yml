@@ -79,7 +79,7 @@ runs:
       if: ${{ inputs.ignore_trivy != 'true' }}
       with:
         path: .trivy
-        key: ${{ runner.os }}-trivy-${{ github.run_id }}
+        key: ${{ runner.os }}-trivy
         restore-keys: |
           ${{ runner.os }}-trivy-
     - name: Run Trivy vulnerability image scanner
