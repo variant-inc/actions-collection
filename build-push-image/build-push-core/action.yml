@@ -81,7 +81,7 @@ runs:
         path: .trivy
         key: ${{ runner.os }}-trivy
         restore-keys: |
-          ${{ runner.os }}-trivy-
+          ${{ runner.os }}-trivy
     - name: Run Trivy vulnerability image scanner
       uses: aquasecurity/trivy-action@master
       id: trivy
