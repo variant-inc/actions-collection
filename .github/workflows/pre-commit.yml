@@ -16,4 +16,6 @@ jobs:
           # Action Docs - https://github.com/npalm/action-docs
           npm install -g action-docs
       - uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
       - uses: pre-commit/action@v3.0.0
