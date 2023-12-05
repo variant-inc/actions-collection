@@ -107,7 +107,7 @@ runs:
       uses: ./.github/workflows/actions-collection/build-push-image/build-push-core
       if: ${{ steps.docker-setup.outputs.docker_skip != 'True' }}
       with:
-        dockerfile_dir_path: ${{ inputs.python-version }}
+        dockerfile_dir_path: ${{ inputs.dockerfile_dir_path }}
         ecr_registry: ${{ steps.ecr.outputs.registry }}
         ecr_repository: ${{ inputs.ecr_repository }}
         ignore_trivy: ${{ inputs.ignore_trivy }}
