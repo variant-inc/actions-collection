@@ -1,8 +1,8 @@
 module.exports = async ({ github, context }) => {
   let versions = [
-    process.env.GITVERSION_MAJORMINORPATCH,
-    `${process.env.GITVERSION_MAJOR}.${process.env.GITVERSION_MINOR}`,
-    `${process.env.GITVERSION_MAJOR}`,
+    process.env.GitVersion_MajorMinorPatch,
+    `${process.env.GitVersion_Major}.${process.env.GitVersion_Minor}`,
+    `${process.env.GitVersion_Major}`,
   ];
   versions.forEach(async (version) => {
     try {

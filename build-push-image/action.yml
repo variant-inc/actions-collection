@@ -72,7 +72,7 @@ runs:
         echo "::endgroup::"
 
     - name: Configure AWS credentials for ECR
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: arn:aws:iam::064859874041:role/eks-github-runner
         aws-region: ${{ inputs.aws_region }}

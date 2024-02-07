@@ -1,5 +1,5 @@
 module.exports = async ({ github, context }) => {
-  let versions = [process.env.GITVERSION_MAJORMINORPATCH];
+  let versions = [process.env.GitVersion_MajorMinorPatch];
   versions.forEach(async (version) => {
     try {
       console.log(`Creating v${version} release`);

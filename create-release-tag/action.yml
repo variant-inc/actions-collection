@@ -31,15 +31,15 @@ runs:
   using: composite
   steps:
     - name: Create or Update tags
-      uses: actions/github-script@v6
-      if: ${{ env.GITVERSION_PRERELEASETAG != '' && env.GITVERSION_PRERELEASELABEL == '' }}
+      uses: actions/github-script@v7
+      if: ${{ env.GitVersion_PreReleaseTag != '' && env.GitVersion_preReleaseLabel == '' }}
       with:
         script: |
           const script = require('${{ github.action_path }}/tags.js')
           await script({github, context})
     - name: Create or Update Release
-      uses: actions/github-script@v6
-      if: ${{ env.GITVERSION_PRERELEASETAG != '' && env.GITVERSION_PRERELEASELABEL == '' && inputs.create_release == 'true' }}
+      uses: actions/github-script@v7
+      if: ${{ env.GitVersion_PreReleaseTag != '' && env.GitVersion_preReleaseLabel == '' && inputs.create_release == 'true' }}
       with:
         script: |
           const script = require('${{ github.action_path }}/release.js')
