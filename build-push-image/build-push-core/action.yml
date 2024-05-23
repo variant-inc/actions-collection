@@ -82,6 +82,7 @@ runs:
         key: ${{ runner.os }}-trivy
         restore-keys: |
           ${{ runner.os }}-trivy
+
     - name: Run Trivy vulnerability image scanner
       uses: aquasecurity/trivy-action@master
       id: trivy
@@ -95,6 +96,7 @@ runs:
         github-pat: ${{ env.GITHUB_TOKEN }}
         timeout: 10m
         cache-dir: .trivy
+
     - name: Set Summary
       shell: bash
       if: ${{ inputs.ignore_trivy != 'true' && failure() && steps.trivy.conclusion == 'failure' }}
@@ -104,22 +106,15 @@ runs:
           Check the results to see if there are any critical errors and fix them.
           If it is something else, check with #cloudops.
         EOT
+
     - name: Correct Trivy cache permissions
       shell: bash
       if: ${{ inputs.ignore_trivy != 'true' }}
       run: sudo chown -R $USER:$GROUP .trivy
-
-    - uses: docker/build-push-action@v5
-      name: Push Container Image
-      with:
-        context: ${{ inputs.dockerfile_dir_path }}
-        push: true
-        tags: ${{ steps.metadata.outputs.tags }}
-        labels: ${{ steps.metadata.outputs.labels }}
-        build-args: |
-          ${{ steps.setup-build.outputs.build_args }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+    - name: Push Container Image
+      shell: bash
+      run: |
+        docker image push -a ${{ steps.setup-build.outputs.ecr-image }}
 
     - name: Set Summary
       shell: bash
