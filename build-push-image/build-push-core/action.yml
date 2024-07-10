@@ -61,7 +61,7 @@ runs:
           type=ref,enable=true,event=pr
           type=sha,enable=true
 
-    - uses: docker/build-push-action@v5
+    - uses: docker/build-push-action@v6
       name: Build Container Image
       with:
         context: ${{ inputs.dockerfile_dir_path }}
