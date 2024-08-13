@@ -38,7 +38,8 @@ runs:
       run: |
         wait_flag="false"
         if [ "$GitVersion_PreReleaseLabel" == "" ]; then
-          wait_flag="true"
+          # wait_flag="true"
+          echo "$wait_flag"
         fi
         echo "wait_flag=$wait_flag" >> $GITHUB_OUTPUT
         echo "wait_flag=$wait_flag"
