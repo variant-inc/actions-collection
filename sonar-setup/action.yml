@@ -36,23 +36,17 @@ runs:
       id: flags
       shell: bash
       run: |
-        echo "secret=$SONAR_OVERRIDE_WAIT_FLAG"
-        echo $SONAR_OVERRIDE_WAIT_FLAG
-
-        override_sonar_wait_flag=$SONAR_OVERRIDE_WAIT_FLAG
-        if [ -n "$override_sonar_wait_flag" ]; then
-            wait_flag=$override_sonar_wait_flag
-            echo "using value from secrets"
+        wait_flag="false"
+        if [ -n "$SONAR_OVERRIDE_WAIT_FLAG" ]; then
+            echo "Overriding wait_flag to $SONAR_OVERRIDE_WAIT_FLAG"
+            wait_flag=$SONAR_OVERRIDE_WAIT_FLAG
         else
-            wait_flag="false"
-            echo "Not using value from secrets"
-            if [  "$GitVersion_PreReleaseLabel" == "" ]; then
-                echo "using empty git pre-release label"
+            if [ "$GitVersion_PreReleaseLabel" == "" ]; then
+                echo "Setting wait_flag to true because GitVersion_PreReleaseLabel is empty"
                 wait_flag="true"
             fi
-             echo "using non empty git pre-release label"
-            echo "$wait_flag"
         fi
+        echo "Sonar Wait Flag is $wait_flag"
 
         echo "wait_flag=$wait_flag" >> $GITHUB_OUTPUT
         echo "wait_flag=$wait_flag"
