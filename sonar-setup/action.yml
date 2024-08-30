@@ -42,7 +42,8 @@ runs:
             wait_flag=$SONAR_OVERRIDE_WAIT_FLAG
         else
             if [ "$GitVersion_PreReleaseLabel" == "" ]; then
-                echo "Setting wait_flag to true because GitVersion_PreReleaseLabel is empty"
+                echo "Setting wait_flag to \
+                true because GitVersion_PreReleaseLabel is empty"
                 wait_flag="true"
             fi
         fi
