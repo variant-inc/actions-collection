@@ -37,10 +37,18 @@ runs:
       shell: bash
       run: |
         wait_flag="false"
-        if [ "$GitVersion_PreReleaseLabel" == "" ]; then
-          # wait_flag="true"
-          echo "$wait_flag"
+        if [ -n "$SONAR_OVERRIDE_WAIT_FLAG" ]; then
+            echo "Overriding wait_flag to $SONAR_OVERRIDE_WAIT_FLAG"
+            wait_flag=$SONAR_OVERRIDE_WAIT_FLAG
+        else
+            if [ "$GitVersion_PreReleaseLabel" == "" ]; then
+                echo "Setting wait_flag to \
+                true because GitVersion_PreReleaseLabel is empty"
+                wait_flag="true"
+            fi
         fi
+        echo "Sonar Wait Flag is $wait_flag"
+
         echo "wait_flag=$wait_flag" >> $GITHUB_OUTPUT
         echo "wait_flag=$wait_flag"
 
