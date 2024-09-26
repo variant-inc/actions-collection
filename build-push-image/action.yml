@@ -61,7 +61,7 @@ runs:
         # Check if the branch is not main, master, or a release branch
         if [[ "$branch_name" != "main" && "$branch_name" != "master" && "$branch_name" != release* ]]; then
           echo "ECR repository name with feature suffix"
-          echo "ECR_REPOSITORY=${{ inputs.ecr_repository }}-feature" >> $GITHUB_ENV
+          echo "ECR_REPOSITORY=feature/${{ inputs.ecr_repository }}" >> $GITHUB_ENV
         else
           echo "ECR repository name without feature suffix"
           echo "ECR_REPOSITORY=${{ inputs.ecr_repository }}" >> $GITHUB_ENV
