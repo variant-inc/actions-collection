@@ -83,6 +83,16 @@ runs:
         restore-keys: |
           ${{ runner.os }}-trivy
 
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-2
+        role-to-assume: arn:aws:iam::108141096600:role/github-actions-role
+
+    - name: Login to Amazon ECR Public
+      id: login-ecr-public
+      uses: aws-actions/amazon-ecr-login@v2
+
     - name: Run Trivy vulnerability image scanner
       uses: aquasecurity/trivy-action@master
       id: trivy
@@ -96,6 +106,8 @@ runs:
         github-pat: ${{ env.GITHUB_TOKEN }}
         timeout: 10m
         cache-dir: .trivy
+      env:
+        TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db:2
 
     - name: Set Summary
       shell: bash
