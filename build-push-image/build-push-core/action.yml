@@ -93,7 +93,7 @@ runs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: arn:aws:iam::064859874041:role/eks-github-runner
-        aws-region: us-east-1
+        aws-region: ${{ inputs.aws_region }}
 
     - name: Login to Amazon ECR Public
       id: login-ecr-public
