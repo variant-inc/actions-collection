@@ -111,3 +111,4 @@ runs:
         ecr_registry: ${{ steps.ecr.outputs.registry }}
         ecr_repository: ${{ inputs.ecr_repository }}
         ignore_trivy: ${{ inputs.ignore_trivy }}
+        aws-region: ${{ inputs.aws_region }}

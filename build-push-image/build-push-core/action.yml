@@ -21,6 +21,12 @@ inputs:
     description: Ignore Trivy Scanning
     default: 'false'
     required: false
+  aws_region:
+    description: >
+      Region where the image will be created.
+      Defaults to us-east-2.
+    default: us-east-2
+    required: false
 runs:
   using: composite
   steps:
@@ -83,15 +89,17 @@ runs:
         restore-keys: |
           ${{ runner.os }}-trivy
 
-    - name: Configure AWS Credentials
+    - name: Configure AWS credentials for ECR
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        aws-region: us-east-2
-        role-to-assume: arn:aws:iam::108141096600:role/github-actions-role
+        role-to-assume: arn:aws:iam::064859874041:role/eks-github-runner
+        aws-region: ${{ inputs.aws_region }}
 
     - name: Login to Amazon ECR Public
       id: login-ecr-public
       uses: aws-actions/amazon-ecr-login@v2
+      with:
+        registry-type: public
 
     - name: Run Trivy vulnerability image scanner
       uses: aquasecurity/trivy-action@master
@@ -123,6 +131,7 @@ runs:
       shell: bash
       if: ${{ inputs.ignore_trivy != 'true' }}
       run: sudo chown -R $USER:$GROUP .trivy
+
     - name: Push Container Image
       shell: bash
       run: |
