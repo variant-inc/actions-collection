@@ -21,12 +21,6 @@ inputs:
     description: Ignore Trivy Scanning
     default: 'false'
     required: false
-  aws_region:
-    description: >
-      Region where the image will be created.
-      Defaults to us-east-2.
-    default: us-east-2
-    required: false
 runs:
   using: composite
   steps:
@@ -93,7 +87,7 @@ runs:
       uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: arn:aws:iam::064859874041:role/eks-github-runner
-        aws-region: ${{ inputs.aws_region }}
+        aws-region: us-east-1
 
     - name: Login to Amazon ECR Public
       id: login-ecr-public
