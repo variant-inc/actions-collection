@@ -61,6 +61,13 @@ runs:
           type=ref,enable=true,event=pr
           type=sha,enable=true
 
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ env.GITHUB_TOKEN }}
+
     - uses: docker/build-push-action@v6
       name: Build Container Image
       with:
