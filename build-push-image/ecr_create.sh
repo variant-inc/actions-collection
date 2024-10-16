@@ -1,45 +1,36 @@
 #!/bin/bash
 set -e
 
-url_encoded_ecr_repository=$(echo "$ECR_REPOSITORY" | sed 's/\//\%2F/g')
-
+# Extract the branch name from GITHUB_REF
+BRANCH_NAME=${GITHUB_REF##*/}
+PROFILE="v-prod"
 echo "::debug::ECR_REPOSITORY: $ECR_REPOSITORY"
-echo "::debug::URL_ECR_REPOSITORY: $url_encoded_ecr_repository"
+echo "::debug::BRANCH_NAME: $BRANCH_NAME"
 
-# Try fetching the repository policy
-response=$(curl -sSfL --retry 5 --retry-all-errors  "https://$LAZY_API_URL/tenants/apps/profiles/production/regions/$AWS_REGION/ecr/repo/$url_encoded_ecr_repository/repo-policy" \
-    --header "x-api-key: $LAZY_API_KEY" || echo "error")
-
-echo "::debug::$response"
-# if error then create repo
-if [ "$response" == "error" ]; then
-    echo "Repository $ECR_REPOSITORY was not found"
-    echo "Attempting to create a repository with name ${ECR_REPOSITORY}"
-    data=$(
-        cat <<EOF
+# Prepare the request data
+data=$(cat <<EOF
 {
-  "profile": "production",
-  "region": "$AWS_REGION",
-  "options": {
-    "repositoryName": "$ECR_REPOSITORY",
-    "imageTagMutability": "MUTABLE"
-  }
+  "repoName": "$ECR_REPOSITORY",
+  "branchName": "$BRANCH_NAME"
 }
 EOF
-    )
-    response=$(curl -sSfL --retry 5 --retry-all-errors -X POST \
-            "https://$LAZY_API_URL/tenants/apps/profiles/production/regions/$AWS_REGION/ecr/repo" \
-        -d "$data" --header "x-api-key: $LAZY_API_KEY" --header "Content-Type: application/json" || echo "error")
+)
 
-    echo "::debug::$response"
-    # If repo cannot be created then exit 1
-    if [ "$response" == "error" ]; then
-        echo "::error::Failed to create the ECR Repository $ECR_REPOSITORY."
-        exit 1
-    else
-        echo "::notice::ECR Repository $ECR_REPOSITORY successfully created"
-    fi
-    # repo already exists
-else
+# Make the API call
+response=$(curl -sSfL --retry 5 --retry-all-errors -X POST \
+    -H "X-API-KEY: $API_KEY" \
+    "$LAZY_GO_URL/v1/aws/$PROFILE/ecr" \
+    --data "$data" -v || echo "error")
+
+# Output the response for debugging
+echo "::debug::$response"
+
+# Handle response based on your API's expected output
+if [[ $response == *"already exists"* ]]; then
     echo "::notice::ECR Repository $ECR_REPOSITORY already exists"
+elif [[ $response == *"created"* ]]; then
+    echo "::notice::ECR Repository $ECR_REPOSITORY successfully created"
+else
+    echo "::error::Failed to handle the ECR Repository $ECR_REPOSITORY."
+    exit 1
 fi
