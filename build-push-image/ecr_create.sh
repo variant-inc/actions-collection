@@ -2,16 +2,49 @@
 set -e
 
 # Extract the branch name from GITHUB_REF
-BRANCH_NAME=${GITHUB_REF##*/}
-PROFILE="v-prod"
+if [[ "$GitVersion_PreReleaseLabel" != "" ]]; then
+    LIFECYCLE_POLICY="{
+        \"rules\": [
+            {
+                \"rulePriority\": 1,
+                \"selection\": {
+                    \"tagStatus\": \"any\",
+                    \"countType\": \"imageCountMoreThan\",
+                    \"countNumber\": 30
+                },
+                \"action\": {
+                    \"type\": \"expire\"
+                }
+            }
+        ]
+    }"
+else
+    LIFECYCLE_POLICY="{
+        \"rules\": [
+            {
+                \"rulePriority\": 1,
+                \"selection\": {
+                    \"tagStatus\": \"any\",
+                    \"countType\": \"imageCountMoreThan\",
+                    \"countNumber\": 50
+                },
+                \"action\": {
+                    \"type\": \"expire\"
+                }
+            }
+        ]
+    }"
+fi
+
+PROFILE="dpl"
 echo "::debug::ECR_REPOSITORY: $ECR_REPOSITORY"
-echo "::debug::BRANCH_NAME: $BRANCH_NAME"
+echo "::debug::LIFECYCLE_POLICY: $LIFECYCLE_POLICY"
 
 # Prepare the request data
 data=$(cat <<EOF
 {
   "repoName": "$ECR_REPOSITORY",
-  "branchName": "$BRANCH_NAME"
+  "lifeCyclePolicy": $LIFECYCLE_POLICY
 }
 EOF
 )

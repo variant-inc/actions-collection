@@ -55,11 +55,8 @@ runs:
       id: set-ecr-repo
       shell: bash
       run: |
-        # Get the current branch name
-        branch_name="${GITHUB_REF##*/}"
-
         # Check if the branch is not main, master, or a release branch
-        if [[ "$branch_name" != "main" && "$branch_name" != "master" && "$branch_name" != release* ]]; then
+        if [[ "$GitVersion_PreReleaseLabel" != "" ]]; then
           echo "ECR repository name with feature suffix"
           echo "ECR_REPOSITORY=feature/${{ inputs.ecr_repository }}" >> $GITHUB_ENV
         else
