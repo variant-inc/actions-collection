@@ -30,7 +30,7 @@ LIFECYCLE_POLICY=$(
 EOF
 )
 
-PROFILE="v-prod"
+PROFILE="production"
 echo "::debug::ECR_REPOSITORY: $ECR_REPOSITORY"
 echo "::debug::LIFECYCLE_POLICY: $LIFECYCLE_POLICY"
 
