@@ -51,10 +51,22 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Set ECR Repository Name
+      id: set-ecr-repo
+      shell: bash
+      run: |
+        # Check if the branch is not main, master, or a release branch
+        if [[ "$GitVersion_PreReleaseLabel" != "" ]]; then
+          echo "ECR repository name with feature suffix"
+          echo "ECR_REPOSITORY=feature/${{ inputs.ecr_repository }}" >> $GITHUB_ENV
+        else
+          echo "ECR repository name without feature suffix"
+          echo "ECR_REPOSITORY=${{ inputs.ecr_repository }}" >> $GITHUB_ENV
+        fi
     - name: Create ECR if not exists
       shell: bash
       env:
-        ECR_REPOSITORY: ${{ inputs.ecr_repository }}
+        ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
         AWS_REGION: ${{ inputs.aws_region }}
       run: ${{ github.action_path }}/ecr_create.sh
 
@@ -86,7 +98,7 @@ runs:
       shell: bash
       env:
         ECR_REGISTRY: ${{ steps.ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ inputs.ecr_repository }}
+        ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
       run: ${{ github.action_path }}/check_tag_exists.sh
 
     - name: Get Build Push Action
@@ -100,7 +112,7 @@ runs:
       shell: pwsh
       run: |
         ## Used by cake-runner
-        $Image = "${{ steps.ecr.outputs.registry }}/${{ inputs.ecr_repository }}"
+        $Image = "${{ steps.ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}"
         Add-Content -Path ${env:GITHUB_ENV} -Encoding utf8 -Value "IMAGE_NAME=${Image}:${env:IMAGE_VERSION}"
 
     - name: Build & Push Container Core
@@ -109,6 +121,6 @@ runs:
       with:
         dockerfile_dir_path: ${{ inputs.dockerfile_dir_path }}
         ecr_registry: ${{ steps.ecr.outputs.registry }}
-        ecr_repository: ${{ inputs.ecr_repository }}
+        ecr_repository: ${{ env.ECR_REPOSITORY }}
         ignore_trivy: ${{ inputs.ignore_trivy }}
         aws-region: ${{ inputs.aws_region }}
