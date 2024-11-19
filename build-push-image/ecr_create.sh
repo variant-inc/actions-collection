@@ -46,7 +46,7 @@ EOF
 
 # Make the API call
 response=$(curl -sSfL --retry 5 --retry-all-errors -X POST \
-	-H "X-API-KEY: $API_KEY" \
+	-H "X-API-KEY: $LAZY_GO_KEY" \
 	"$LAZY_GO_URL/v1/aws/$PROFILE/ecr" \
 	--data "$data" -v || echo "error")
 
