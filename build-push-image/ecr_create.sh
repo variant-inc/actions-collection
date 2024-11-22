@@ -1,45 +1,64 @@
 #!/bin/bash
 set -e
 
-url_encoded_ecr_repository=$(echo "$ECR_REPOSITORY" | sed 's/\//\%2F/g')
+# shellcheck disable=SC2154
+# Determine the countNumber based on the GitVersion_PreReleaseLabel
+if [[ "$GitVersion_PreReleaseLabel" != "" ]]; then
+	COUNT_NUMBER=30
+else
+	COUNT_NUMBER=50
+fi
 
-echo "::debug::ECR_REPOSITORY: $ECR_REPOSITORY"
-echo "::debug::URL_ECR_REPOSITORY: $url_encoded_ecr_repository"
-
-# Try fetching the repository policy
-response=$(curl -sSfL --retry 5 --retry-all-errors  "https://$LAZY_API_URL/tenants/apps/profiles/production/regions/$AWS_REGION/ecr/repo/$url_encoded_ecr_repository/repo-policy" \
-    --header "x-api-key: $LAZY_API_KEY" || echo "error")
-
-echo "::debug::$response"
-# if error then create repo
-if [ "$response" == "error" ]; then
-    echo "Repository $ECR_REPOSITORY was not found"
-    echo "Attempting to create a repository with name ${ECR_REPOSITORY}"
-    data=$(
-        cat <<EOF
+# Construct the lifecycle policy JSON
+LIFECYCLE_POLICY=$(
+	cat <<EOF
 {
-  "profile": "production",
-  "region": "$AWS_REGION",
-  "options": {
-    "repositoryName": "$ECR_REPOSITORY",
-    "imageTagMutability": "MUTABLE"
-  }
+    "rules": [
+        {
+            "rulePriority": 1,
+            "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": $COUNT_NUMBER
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
 }
 EOF
-    )
-    response=$(curl -sSfL --retry 5 --retry-all-errors -X POST \
-            "https://$LAZY_API_URL/tenants/apps/profiles/production/regions/$AWS_REGION/ecr/repo" \
-        -d "$data" --header "x-api-key: $LAZY_API_KEY" --header "Content-Type: application/json" || echo "error")
+)
 
-    echo "::debug::$response"
-    # If repo cannot be created then exit 1
-    if [ "$response" == "error" ]; then
-        echo "::error::Failed to create the ECR Repository $ECR_REPOSITORY."
-        exit 1
-    else
-        echo "::notice::ECR Repository $ECR_REPOSITORY successfully created"
-    fi
-    # repo already exists
+PROFILE="production"
+echo "::debug::ECR_REPOSITORY: $ECR_REPOSITORY"
+echo "::debug::LIFECYCLE_POLICY: $LIFECYCLE_POLICY"
+
+# Prepare the request data
+data=$(
+	cat <<EOF
+{
+    "repoName": "$ECR_REPOSITORY",
+    "lifeCyclePolicy": $LIFECYCLE_POLICY
+}
+EOF
+)
+
+# Make the API call
+response=$(curl -sSfL --retry 5 --retry-all-errors -X POST \
+	-H "Authorization: $LAZY_GO_KEY" \
+	"$LAZY_GO_URL/v1/aws/$PROFILE/ecr" \
+	--data "$data" -v || echo "error")
+
+# Output the response for debugging
+echo "::debug::$response"
+
+# Handle response based on your API's expected output
+if [[ $response == *"already exists"* ]]; then
+	echo "::notice::ECR Repository $ECR_REPOSITORY already exists"
+elif [[ $response == *"created"* ]]; then
+	echo "::notice::ECR Repository $ECR_REPOSITORY successfully created"
 else
-    echo "::notice::ECR Repository $ECR_REPOSITORY already exists"
+	echo "::error::Failed to handle the ECR Repository $ECR_REPOSITORY."
+	exit 1
 fi
