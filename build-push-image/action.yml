@@ -73,9 +73,9 @@ runs:
     - name: Download .trivyignore
       shell: bash
       run: |
-        aws s3 cp s3://trivy-ops/.trivyignore .
+        aws s3 cp s3://${TRIVY_S3_BUCKET}/.trivyignore .
         echo "::debug::Checking for .trivyignore specific to $GITHUB_REPOSITORY"
-        aws s3 cp "s3://trivy-ops/${GITHUB_REPOSITORY}/.trivyignore" .trivyignore.repository || {
+        aws s3 cp "s3://${TRIVY_S3_BUCKET}/${GITHUB_REPOSITORY}/.trivyignore" .trivyignore.repository || {
           exit 0
         }
         cat .trivyignore.repository >> .trivyignore
