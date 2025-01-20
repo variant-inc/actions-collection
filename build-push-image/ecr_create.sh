@@ -48,7 +48,7 @@ EOF
 response=$(curl -sSfL --retry 5 --retry-all-errors -X POST \
 	-H "Authorization: $LAZY_GO_KEY" \
 	"$LAZY_GO_URL/v1/aws/$PROFILE/ecr" \
-	--data "$data" -v || echo "error")
+	--data "$data" || echo "error")
 
 # Output the response for debugging
 echo "::debug::$response"
