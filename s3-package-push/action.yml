@@ -48,7 +48,7 @@ runs:
       shell: pwsh
       run: |
         $branchName = "${{ github.ref }}" -replace '^refs/heads/', ''
-        .github/scripts/s3PackagePush.ps1 -BranchName $branchName
+        ${{ github.action_path }}/s3PackagePush.ps1 -BranchName $branchName
       env:
         PACKAGE_PATH: ${{ inputs.package_path }}
         S3_BUCKET: ${{ inputs.s3_bucket }}
