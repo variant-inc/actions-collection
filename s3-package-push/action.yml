@@ -30,7 +30,7 @@ inputs:
     description: The local path of the package to be uploaded
     required: true
   s3_bucket:
-    description: The name of the target S3 bucket 
+    description: The name of the target S3 bucket
     required: true
   package_name:
     description: The name of the package
@@ -43,7 +43,7 @@ runs:
       with:
         role-to-assume: arn:aws:iam::064859874041:role/ops-github-runner
         aws-region: us-east-2
-    
+
     - name: S3 Push Package
       shell: pwsh
       run: |
@@ -53,5 +53,3 @@ runs:
         PACKAGE_PATH: ${{ inputs.package_path }}
         S3_BUCKET: ${{ inputs.s3_bucket }}
         PACKAGE_NAME: ${{ inputs.package_name }}
-    
-
