@@ -1,0 +1,57 @@
+---
+# yamllint disable rule:line-length
+name: Upload Package to S3
+description: |
+  This GitHub Action uploads a specified package to an S3 bucket when merged to the main branch.
+  If the package already exists, it is overwritten.
+
+  ## Permissions
+
+  Add the following permissions to the job
+
+  ```yaml
+  permissions:
+    id-token: write
+    contents: read
+  ```
+
+  ## Usage
+
+  ```yaml
+  - name: Upload Package to S3
+    uses: variant-inc/actions-collection/upload-s3-package@v2
+    with:
+      package_path: 'path/to/package'
+      s3_bucket: 'my-s3-bucket'
+      package_name: 'my-cli'
+  ```
+inputs:
+  package_path:
+    description: The local path of the package to be uploaded
+    required: true
+  s3_bucket:
+    description: The name of the target S3 bucket 
+    required: true
+  package_name:
+    description: The name of the package
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::064859874041:role/ops-github-runner
+        aws-region: us-east-2
+    
+    - name: S3 Push Package
+      shell: pwsh
+      run: |
+        $branchName = "${{ github.ref }}" -replace '^refs/heads/', ''
+        .github/scripts/s3PackagePush.ps1 -BranchName $branchName
+      env:
+        PACKAGE_PATH: ${{ inputs.package_path }}
+        S3_BUCKET: ${{ inputs.s3_bucket }}
+        PACKAGE_NAME: ${{ inputs.package_name }}
+    
+
