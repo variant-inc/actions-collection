@@ -2,7 +2,8 @@
 # yamllint disable rule:line-length
 name: Upload Package to S3
 description: |
-  This GitHub Action uploads a specified package to an S3 bucket when merged to the main branch.
+  This GitHub Action uploads a specified package to an
+  S3 bucket when merged to the main branch.
   If the package already exists, it is overwritten.
 
   ## Permissions

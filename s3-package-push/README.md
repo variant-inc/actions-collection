@@ -3,10 +3,9 @@
 <!-- action-docs-description -->
 ## Description
 
-Upload Package to S3
-
-required env:
-  IMAGE_VERSION
+This GitHub Action uploads a specified package to an
+S3 bucket when merged to the main branch.
+If the package already exists, it is overwritten.
 
 ## Permissions
 
@@ -21,12 +20,12 @@ permissions:
 ## Usage
 
 ```yaml
-  - name: Upload Package to S3
-    uses: variant-inc/actions-collection/upload-s3-package@v2
-    with:
-      package_path: 'path/to/package'
-      s3_bucket: 'my-s3-bucket'
-      package_name: 'my-cli'
+- name: Upload Package to S3
+  uses: variant-inc/actions-collection/upload-s3-package@v2
+  with:
+    package_path: 'path/to/package'
+    s3_bucket: 'my-s3-bucket'
+    package_name: 'my-cli'
 ```
 <!-- action-docs-description -->
 
@@ -36,9 +35,9 @@ permissions:
 
 | parameter | description | required | default |
 | --- | --- | --- | --- |
-| package_path | The local path of the package to be uploaded | `true` | |
-| s3_bucket | The name of the target S3 bucket  | `true` |  |
-| package_name | The name of the package.  | `true` | |
+| package_path | The local path of the package to be uploaded | `true` |  |
+| s3_bucket | The name of the target S3 bucket | `true` |  |
+| package_name | The name of the package | `true` |  |
 <!-- action-docs-inputs -->
 <!-- markdownlint-enable line-length -->
 

@@ -1,14 +1,6 @@
 #!/bin/bash
 set -e
 
-# shellcheck disable=SC2154
-# Determine the countNumber based on the GitVersion_PreReleaseLabel
-if [[ "$GitVersion_PreReleaseLabel" != "" ]]; then
-	COUNT_NUMBER=30
-else
-	COUNT_NUMBER=50
-fi
-
 # Construct the lifecycle policy JSON
 LIFECYCLE_POLICY=$(
 	cat <<EOF
@@ -17,9 +9,21 @@ LIFECYCLE_POLICY=$(
         {
             "rulePriority": 1,
             "selection": {
+                "tagStatus": "tagged",
+                "tagPatternList": ["*renovate*", "*dependabot*"],
+                "countType": "imageCountMoreThan",
+                "countNumber": 10
+            },
+            "action": {
+                "type": "expire"
+            }
+        },
+        {
+            "rulePriority": 2,
+            "selection": {
                 "tagStatus": "any",
                 "countType": "imageCountMoreThan",
-                "countNumber": $COUNT_NUMBER
+                "countNumber": 50
             },
             "action": {
                 "type": "expire"
@@ -30,7 +34,7 @@ LIFECYCLE_POLICY=$(
 EOF
 )
 
-PROFILE="production"
+PROFILE="${ECR_PROFILE:-production}"
 echo "::debug::ECR_REPOSITORY: $ECR_REPOSITORY"
 echo "::debug::LIFECYCLE_POLICY: $LIFECYCLE_POLICY"
 
@@ -43,6 +47,8 @@ data=$(
 }
 EOF
 )
+data=$(echo "$data" | jq -cr)
+echo "::debug::ECR Data: $data"
 
 # Make the API call
 response=$(curl -sSfL --retry 5 --retry-all-errors -X POST \
