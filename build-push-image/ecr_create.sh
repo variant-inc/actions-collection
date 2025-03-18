@@ -50,6 +50,11 @@ EOF
 data=$(echo "$data" | jq -cr)
 echo "::debug::ECR Data: $data"
 
+curl -sSfL -v --retry-all-errors -X POST \
+	-H "Authorization: $LAZY_GO_KEY" \
+	"$LAZY_GO_URL/v1/aws/$PROFILE/ecr" \
+	--data "$data"
+
 # Make the API call
 response=$(curl -sSfL --retry 5 --retry-all-errors -X POST \
 	-H "Authorization: $LAZY_GO_KEY" \
