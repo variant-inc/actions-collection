@@ -17,8 +17,7 @@ if (-not $Version) {
 }
 
 # main is stable, else pre-release and append version
-$Branch = if ($BranchName -in "main", "master") { "stable" } else { "pre-release" }
-$S3Key = "$Branch/$env:PACKAGE_NAME/$env:PACKAGE_NAME.$Version.zip"
+$S3Key = "$env:PACKAGE_NAME/$env:PACKAGE_NAME.$Version.zip"
 
 if (!(Test-Path -Path $SourcePackage)) {
     Write-Error "Error: $SourcePackage does not exist."
