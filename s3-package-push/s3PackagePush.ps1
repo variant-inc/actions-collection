@@ -47,10 +47,7 @@ $tags = @{
     )
 } | ConvertTo-Json -Compress
 
-aws s3api put-object-tagging \
-    --bucket $S3Bucket \
-    --key $S3Key \
-    --tagging $tags
+aws s3api put-object-tagging --bucket $S3Bucket --key $S3Key --tagging $tags
 
 Write-Host "Add tag $tags to s3://$S3Bucket/$S3Key"
 
