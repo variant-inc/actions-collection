@@ -36,9 +36,9 @@ aws s3 cp $ZipPackage "s3://$S3Bucket/$S3Key"
 Write-Host "Upload complete to s3://$S3Bucket/$S3Key"
 
 $ReleaseType = "pre-release"
-if [ "${GitVersion_PreReleaseLabel}" == "" ]; then
+if ([string]::IsNullOrEmpty($env:GitVersion_PreReleaseLabel)) {
     $ReleaseType = "stable"
-fi
+}
 
 $tags = @{
     TagSet = @(
