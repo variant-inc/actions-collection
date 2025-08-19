@@ -20,6 +20,8 @@ permissions:
 ```yaml
 - name: Create Release Action
   uses: variant-inc/actions-collection/create-release-tag@v2
+  env:
+    RELEASE_FILES_GLOB: 'binaries/*' # Glob pattern for files to upload
   with:
     create_release: 'true'
 ```
