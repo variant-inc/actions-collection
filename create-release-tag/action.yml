@@ -19,6 +19,8 @@ description: |
   ```yaml
   - name: Create Release Action
     uses: variant-inc/actions-collection/create-release-tag@v2
+    env:
+      RELEASE_FILES_GLOB: 'binaries/*' # Glob pattern for files to upload
     with:
       create_release: 'true'
   ```
@@ -44,3 +46,12 @@ runs:
         script: |
           const script = require('${{ github.action_path }}/release.js')
           await script({github, context})
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      if: ${{ env.RELEASE_FILES_GLOB != '' && env.GitVersion_PreReleaseLabel == '' && inputs.create_release == 'true' }}
+      with:
+        repo_token: ${{ env.GITHUB_TOKEN }}
+        file: ${{ env.RELEASE_FILES_GLOB }}
+        tag: v${{ env.GitVersion_MajorMinorPatch }}
+        overwrite: true
+        file_glob: true
