@@ -33,14 +33,14 @@ runs:
   using: composite
   steps:
     - name: Create or Update tags
-      uses: actions/github-script@v7
+      uses: actions/github-script@v8
       if: ${{ env.GitVersion_PreReleaseLabel == '' }}
       with:
         script: |
           const script = require('${{ github.action_path }}/tags.js')
           await script({github, context})
     - name: Create or Update Release
-      uses: actions/github-script@v7
+      uses: actions/github-script@v8
       if: ${{ env.GitVersion_PreReleaseLabel == '' && inputs.create_release == 'true' }}
       with:
         script: |

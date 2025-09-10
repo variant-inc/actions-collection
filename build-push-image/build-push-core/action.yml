@@ -91,7 +91,7 @@ runs:
           ${{ runner.os }}-trivy
 
     - name: Configure AWS credentials for ECR
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@v5
       with:
         role-to-assume: arn:aws:iam::064859874041:role/eks-github-runner
         aws-region: us-east-1
