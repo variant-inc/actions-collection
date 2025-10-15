@@ -111,7 +111,7 @@ runs:
     - name: Set Image Name
       shell: pwsh
       run: |
-        ## Used by cake-runner
+        ## Used by dx-runner
         $Image = "${{ steps.ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}"
         Add-Content -Path ${env:GITHUB_ENV} -Encoding utf8 -Value "IMAGE_NAME=${Image}:${env:IMAGE_VERSION}"
 
