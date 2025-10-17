@@ -57,3 +57,7 @@ Add-Content -Path ${env:GITHUB_STEP_SUMMARY} `
 Add-Content -Path ${env:GITHUB_STEP_SUMMARY} `
   -Encoding utf8 `
   -Value "s3://$S3Bucket/$S3Key"
+Add-Content -Path ${env:GITHUB_STEP_SUMMARY} `
+  -Encoding utf8 `
+  -Value "Version: $Version"
+  
