@@ -78,8 +78,8 @@ runs:
         labels: ${{ steps.metadata.outputs.labels }}
         build-args: |
           ${{ steps.setup-build.outputs.build_args }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        cache-from: ${{ inputs.ignore_trivy != 'true' && 'type=gha' || '' }}
+        cache-to: ${{ inputs.ignore_trivy != 'true' && 'type=gha,mode=max' || '' }}
 
     - uses: actions/cache@v4
       name: Cache Trivy Database
