@@ -35,9 +35,9 @@ permissions:
 
 | parameter | description | required | default |
 | --- | --- | --- | --- |
-| package_path | The local path of the package to be uploaded | `true` |  |
-| s3_bucket | The name of the target S3 bucket | `true` |  |
-| package_name | The name of the package | `true` |  |
+| package_path | The local path of the package to be uploaded | `true` | |
+| s3_bucket | The name of the target S3 bucket | `true` | |
+| package_name | The name of the package | `true` | |
 <!-- action-docs-inputs -->
 <!-- markdownlint-enable line-length -->
 
