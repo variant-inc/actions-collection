@@ -46,7 +46,7 @@ inputs:
     required: false
   ignore_trivy:
     description: Ignore Trivy Scanning
-    default: "false"
+    default: 'false'
     required: false
 runs:
   using: composite
