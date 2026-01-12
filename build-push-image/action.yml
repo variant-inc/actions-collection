@@ -76,14 +76,13 @@ runs:
         unset-current-credentials: true
         role-to-assume: arn:aws:iam::108141096600:role/ops-github-runner
         aws-region: us-east-2
-        set-profile: ops-github-runner
 
     - name: Download .trivyignore
       shell: bash
       run: |
-        aws s3 cp s3://${TRIVY_S3_BUCKET}/.trivyignore . --profile ops-github-runner
+        aws s3 cp s3://${TRIVY_S3_BUCKET}/.trivyignore .
         echo "::debug::Checking for .trivyignore specific to $GITHUB_REPOSITORY"
-        aws s3 cp "s3://${TRIVY_S3_BUCKET}/${GITHUB_REPOSITORY}/.trivyignore" .trivyignore.repository --profile ops-github-runner || {
+        aws s3 cp "s3://${TRIVY_S3_BUCKET}/${GITHUB_REPOSITORY}/.trivyignore" .trivyignore.repository || {
           exit 0
         }
         cat .trivyignore.repository >> .trivyignore
