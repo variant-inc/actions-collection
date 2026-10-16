@@ -40,10 +40,18 @@ if ([string]::IsNullOrEmpty($env:GitVersion_PreReleaseLabel)) {
     $ReleaseType = "stable"
 }
 
+$Source = "manual"
+if ($BranchName -match "renovate") {
+    $Source = "renovate"
+} elseif ($BranchName -match "dependabot") {
+    $Source = "dependabot"
+}
+
 $tags = @{
     TagSet = @(
         @{ Key = "release"; Value = $ReleaseType },
-        @{ Key = "packageType"; Value = "system" }
+        @{ Key = "packageType"; Value = "system" },
+        @{ Key = "source"; Value = $Source }
     )
 } | ConvertTo-Json -Compress
 
